@@ -1,3 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Spicy+Rice&display=swap');
 @import "tailwindcss";
 
+/* Custom font families */
+@theme {
+    --font-spicy-rice: "Spicy Rice", cursive;
+    --font-instrument-sans: "Instrument Sans", sans-serif;
+  }
+
 /* Utility Classes like custom button variant classes */
+@layer utilities {
+    .btn--text-white {
+        @apply rounded text-white p-2 lg:text-xs ;
+    }
+
+    .btn--text-black {
+        @apply rounded text-black p-2 lg:text-xs ;
+    }
+}
