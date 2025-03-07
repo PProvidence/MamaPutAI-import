@@ -17,7 +17,7 @@ const NavBar = () => {
   return (
     <nav className="relative flex items-center justify-between px-4 py-4 font-instrument-sans lg:justify-evenly">
       <div className="flex items-center">
-        <img src="" alt="MamaPut AI Logo" className="h-8" />
+        <img src="" alt="MamaPut AI Logo" className="" />
       </div>
 
       {/* Mobile menu button */}
@@ -35,7 +35,7 @@ const NavBar = () => {
           isOpen
             ? "fixed inset-0 z-10 flex flex-col pt-20 px-6 bg-white"
             : "hidden"
-        } md:static md:flex md:flex-row md:pt-0 md:bg-transparent md:z-auto`}
+        } md:static md:flex md:flex-row md:items-center md:pt-0 md:bg-transparent md:z-auto`}
       >
         <ul className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-6 lg:space-x-8 md:mr-6">
           {navLinks.map((navLink, index) => (
