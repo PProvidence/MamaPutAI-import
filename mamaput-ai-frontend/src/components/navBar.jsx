@@ -64,7 +64,7 @@ const NavBar = () => {
             <Link
               to="/get-started"
               onClick={() => setIsOpen(false)}
-              className="block uppercase btn--text-white bg-black px-4 py-2 rounded text-lg md:text-base"
+              className="block uppercase btn--text-white bg-black rounded text-lg md:text-base"
             >
               Get Started
             </Link>
