@@ -39,7 +39,7 @@ const NavBar = () => {
       >
         <ul className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-6 lg:space-x-8 md:mr-6">
           {navLinks.map((navLink, index) => (
-            <li key={index} className="text-lg md:text-base">
+            <li key={index} className="text-lg md:text-xs lg:text-base">
               <Link 
                 to={navLink.link}
                 onClick={() => setIsOpen(false)}
@@ -55,7 +55,7 @@ const NavBar = () => {
             <Link 
               to="/login"
               onClick={() => setIsOpen(false)}
-              className="block text-lg md:text-base"
+              className="block text-lg md:text-xs lg:text-base"
             >
               Login
             </Link>
@@ -64,7 +64,7 @@ const NavBar = () => {
             <Link
               to="/get-started"
               onClick={() => setIsOpen(false)}
-              className="block uppercase btn--text-white bg-black rounded text-lg md:text-base"
+              className="block uppercase btn--text-white bg-black rounded text-lg md:text-xs"
             >
               Get Started
             </Link>
