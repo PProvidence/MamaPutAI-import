@@ -8,7 +8,7 @@ import FAQs from "./pages/FAQs";
 
 function App() {
   return (
-    <div>
+    <div className="">
       <Router>
         <NavBar />
         <Routes>
