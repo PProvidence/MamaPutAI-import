@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import NavBar from "./components/navBar";
+import LandingPageLayout from "./components/LandingPageLayout"; // Capitalized
 import Home from "./pages/Home";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
@@ -8,18 +8,15 @@ import FAQs from "./pages/FAQs";
 
 function App() {
   return (
-    <div>
-      <Router>
-        <NavBar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/dietician-page" element={<DieticianPage />} />
-          <Route path="/faqs" element={<FAQs />} />
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPageLayout><Home /></LandingPageLayout>} />
+        <Route path="/features" element={<LandingPageLayout><Features /></LandingPageLayout>} />
+        <Route path="/pricing" element={<LandingPageLayout><Pricing /></LandingPageLayout>} />
+        <Route path="/dietician-page" element={<LandingPageLayout><DieticianPage /></LandingPageLayout>} />
+        <Route path="/faqs" element={<LandingPageLayout><FAQs /></LandingPageLayout>} />
+      </Routes>
+    </Router>
   );
 }
 
