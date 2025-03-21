@@ -1,12 +1,6 @@
+import PriceBlock from "../components/priceBlock";
 
 const Pricing = () => {
-<<<<<<< Updated upstream
-    return (
-        <div>
-            <h1>Pricing</h1>
-        </div>
-    );
-=======
   const priceBlockContent = [
     {
       heading: "Basic",
@@ -53,7 +47,7 @@ const Pricing = () => {
   return (
     <div className="lg:px-32 px-16 py-10 flex flex-col gap-20">
       <h3 className="text-2xl md:text-4xl font-bold max-w-2xs break-words tracking-wide font-dm-sans">
-        Choose what&apos;s right for you
+        Choose what's right for you
       </h3>
       <div className="flex lg:flex-row flex-col w-full justify-center gap-5 font-dm-sans">
         <button className="btn--text-white bg-primaryGreen lg:w-1/6 ">
@@ -74,7 +68,6 @@ const Pricing = () => {
       </div>
     </div>
   );
->>>>>>> Stashed changes
 };
 
 export default Pricing;
