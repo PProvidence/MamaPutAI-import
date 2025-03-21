@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LandingPageLayout from "./components/LandingPageLayout"; // Capitalized
+
+import LandingPageLayout from "./components/layouts/LandingPageLayout";
+import SettingsLayout from "./components/layouts/SettingsLayout";
+import ProfileSettings from "./pages/settings/ProfileSettings";
 import Home from "./pages/Home";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
@@ -10,11 +13,54 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPageLayout><Home /></LandingPageLayout>} />
-        <Route path="/features" element={<LandingPageLayout><Features /></LandingPageLayout>} />
-        <Route path="/pricing" element={<LandingPageLayout><Pricing /></LandingPageLayout>} />
-        <Route path="/dietician-page" element={<LandingPageLayout><DieticianPage /></LandingPageLayout>} />
-        <Route path="/faqs" element={<LandingPageLayout><FAQs /></LandingPageLayout>} />
+        <Route
+          path="/"
+          element={
+            <LandingPageLayout>
+              <Home />
+            </LandingPageLayout>
+          }
+        />
+        <Route
+          path="/pricing"
+          element={
+            <LandingPageLayout>
+              <Pricing />
+            </LandingPageLayout>
+          }
+        />
+        <Route
+          path="/pricing"
+          element={
+            <LandingPageLayout>
+              <Features />
+            </LandingPageLayout>
+          }
+        />
+        <Route
+          path="/dietician-page"
+          element={
+            <LandingPageLayout>
+              <DieticianPage />
+            </LandingPageLayout>
+          }
+        />
+        <Route
+          path="/faqs"
+          element={
+            <LandingPageLayout>
+              <FAQs />
+            </LandingPageLayout>
+          }
+        />
+        <Route
+          path="/settings/profile"
+          element={
+            <SettingsLayout>
+              <ProfileSettings />
+            </SettingsLayout>
+          }
+        />
       </Routes>
     </Router>
   );
