@@ -8,4 +8,6 @@
 - npm run dev
 
 # Icons
-- primeicons
+- Hero Icons
+- Lucide React
+- Bootstrap Icons
