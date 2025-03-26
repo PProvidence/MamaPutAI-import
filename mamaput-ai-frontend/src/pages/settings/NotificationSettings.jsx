@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  setNotificationSettings,
   toggleCategoryEnabled,
   toggleNotificationSetting,
 } from "../../../redux/userSettingsSlice";
@@ -8,20 +10,55 @@ import { faToggleOn, faToggleOff } from "@fortawesome/free-solid-svg-icons";
 
 const NotificationSettings = () => {
   const dispatch = useDispatch();
-  const notificationSettings = useSelector(
-    (state) => state.userSettings.notificationSettings
+  const reduxSettings = useSelector((state) => state.userSettings.notificationSettings);
+
+  // ✅ Local state for temporary changes
+  const [localSettings, setLocalSettings] = useState(reduxSettings);
+
+  const categories = Object.keys(localSettings).filter(
+    (key) => typeof localSettings[key] === "object"
   );
 
-  const categories = Object.keys(notificationSettings).filter(
-    (key) => typeof notificationSettings[key] === "object"
-  );
+  // ✅ Toggle category (but only update local state)
+  const handleCategoryToggle = (category) => {
+    setLocalSettings((prev) => {
+      const isEnabled = !prev[`${category}Enabled`];
+
+      const updatedCategory = Object.keys(prev[category]).reduce((acc, setting) => {
+        acc[setting] = isEnabled;
+        return acc;
+      }, {});
+
+      return {
+        ...prev,
+        [`${category}Enabled`]: isEnabled,
+        [category]: updatedCategory,
+      };
+    });
+  };
+
+  // ✅ Toggle individual setting (local state only)
+  const handleSettingToggle = (category, setting) => {
+    setLocalSettings((prev) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [setting]: !prev[category][setting],
+      },
+    }));
+  };
+
+  // ✅ Update Redux store when "Save" is clicked
+  const handleSubmit = () => {
+    dispatch(setNotificationSettings(localSettings));
+  };
 
   return (
     <div>
       <h2 className="heading--settings">Notification Settings</h2>
       <div className="py-10 px-5 flex flex-col gap-10">
         {categories.map((category) => {
-          const isCategoryEnabled = notificationSettings[`${category}Enabled`];
+          const isCategoryEnabled = localSettings[`${category}Enabled`];
 
           return (
             <div key={category} className="notification-category flex flex-col gap-3">
@@ -31,19 +68,13 @@ const NotificationSettings = () => {
                   {category.replace(/([A-Z])/g, " $1").trim()}
                 </h3>
                 <button
-                  onClick={() => dispatch(toggleCategoryEnabled(category))}
+                  onClick={() => handleCategoryToggle(category)}
                   className={`toggle-btn ${isCategoryEnabled ? "active" : ""}`}
                 >
                   {isCategoryEnabled ? (
-                    <FontAwesomeIcon
-                      icon={faToggleOn}
-                      className="text-4xl text-settingsGreen"
-                    />
+                    <FontAwesomeIcon icon={faToggleOn} className="text-4xl text-settingsGreen" />
                   ) : (
-                    <FontAwesomeIcon
-                      icon={faToggleOff}
-                      className="text-4xl text-settingsGreen"
-                    />
+                    <FontAwesomeIcon icon={faToggleOff} className="text-4xl text-settingsGreen" />
                   )}
                 </button>
               </div>
@@ -51,22 +82,18 @@ const NotificationSettings = () => {
               <p className="text-base text-gray-500">Notify me when:</p>
 
               {/* Individual Settings */}
-              {Object.keys(notificationSettings[category]).map((setting) => (
+              {Object.keys(localSettings[category]).map((setting) => (
                 <div key={setting} className="checkbox-item flex gap-2">
                   <input
                     type="checkbox"
-                    checked={notificationSettings[category][setting]}
-                    onChange={() =>
-                      dispatch(toggleNotificationSetting({ category, setting }))
-                    }
+                    checked={localSettings[category][setting]}
+                    onChange={() => handleSettingToggle(category, setting)}
+                    name={setting}
+                    id={setting}
                     className="accent-settingsGreen"
                     disabled={!isCategoryEnabled} // Disable checkbox when category is off
                   />
-                  <label
-                    className={`text-base ${
-                      isCategoryEnabled ? "text-gray-500" : "text-trueGrey"
-                    } capitalize`}
-                  >
+                  <label className={`text-base ${isCategoryEnabled ? "text-gray-500" : "text-trueGrey"} capitalize`}htmlFor={setting}>
                     {setting.replace(/([A-Z])/g, " $1").trim()}
                   </label>
                 </div>
@@ -74,6 +101,10 @@ const NotificationSettings = () => {
             </div>
           );
         })}
+
+        <button onClick={handleSubmit} type="submit" className="form-button">
+          Save notification settings
+        </button>
       </div>
     </div>
   );

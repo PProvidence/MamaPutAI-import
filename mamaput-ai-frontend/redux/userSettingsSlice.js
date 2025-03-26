@@ -91,6 +91,11 @@ const userSettingsSlice = createSlice({
         !state.notificationSettings[category][setting];
     },
 
+    // ✅ New Action: Bulk update settings
+    setNotificationSettings: (state, action) => {
+      state.notificationSettings = action.payload;
+    },
+
     // Update account settings field
     updateAccountSetting(state, action) {
       const { field, value } = action.payload;
@@ -118,6 +123,8 @@ export const {
   removeFromProfileArray,
   toggleCategoryEnabled,
   toggleNotificationSetting,
+  setNotification,
+  setNotificationSettings,
   updateAccountSetting,
   updateTheme,
   updateLanguage,
