@@ -73,7 +73,7 @@ const SettingsLayout = ({ children }) => {
         </div>
 
         {/* Content */}
-        <div className="p-4 md:p-6">
+        <div className="p-4 md:p-6 lg:w-3/5">
           {children}
         </div>
       </div>

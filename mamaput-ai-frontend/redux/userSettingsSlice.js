@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import defaultProfilePic from "../src/assets/img/default-profile.jpg";
 
 const initialState = {
   email: "",
@@ -15,7 +15,7 @@ const initialState = {
     allergies: [],
     healthConditions: [],
     dietaryPreference: "",
-    profilePicture: "/default-profile.png",
+    profilePicture: defaultProfilePic,
   },
 
   notificationSettings: {
@@ -75,10 +75,16 @@ const userSettingsSlice = createSlice({
 
     toggleCategoryEnabled: (state, action) => {
       const category = action.payload;
-      state.notificationSettings[`${category}Enabled`] =
-        !state.notificationSettings[`${category}Enabled`];
+      const isEnabled = !state.notificationSettings[`${category}Enabled`];
+
+      state.notificationSettings[`${category}Enabled`] = isEnabled;
+
+      // If enabling, turn on all related settings
+      Object.keys(state.notificationSettings[category]).forEach((setting) => {
+        state.notificationSettings[category][setting] = isEnabled;
+      });
     },
-    
+
     toggleNotificationSetting: (state, action) => {
       const { category, setting } = action.payload;
       state.notificationSettings[category][setting] =

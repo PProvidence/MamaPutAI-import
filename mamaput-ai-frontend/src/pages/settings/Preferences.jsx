@@ -17,7 +17,7 @@ const Preferences = () => {
         <div className="settings__section flex flex-col gap-3">
           <h2 className="settings--form-heading">Theme</h2>
           <button
-            className="flex items-center gap-3 text-sm font-extralight"
+            className="flex items-center gap-3 text-base font-extralight"
             onClick={() => dispatch(updateTheme(theme ? false : true))}
           >
             {theme ? (
@@ -36,8 +36,8 @@ const Preferences = () => {
         </div>
         <div className="settings__section flex flex-col gap-3">
           <h2 className="settings--form-heading">Language</h2>
-          <p className="text-sm font-extralight">English is the only available language now</p>
-          <label className="flex items-center gap-3 text-sm font-extralight" htmlFor="language">
+          <p className="text-base font-extralight">English is the only available language now</p>
+          <label className="flex items-center gap-3 text-base font-extralight" htmlFor="language">
             <input
               type="checkbox"
               name="language"
