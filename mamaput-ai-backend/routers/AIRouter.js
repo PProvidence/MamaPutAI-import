@@ -3,4 +3,4 @@ import { getMeals } from "../services/AIService.js";
 
 export const aiRouter = express.Router()
  
-aiRouter.get('/meals', getMeals)
+aiRouter.post('/meals', getMeals)
