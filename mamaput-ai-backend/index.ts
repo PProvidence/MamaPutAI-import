@@ -1,12 +1,15 @@
+import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
-import dotenv from "dotenv";
+import { configDotenv } from "dotenv";
 import express from "express";
-import { aiRouter } from "./routers/AIRouter.js";
-dotenv.configDotenv({ path: "./.env" });
+import { auth } from "./lib/auth.ts";
+import { aiRouter } from "./routers/AIRouter.ts";
+configDotenv({ path: "./.env" });
 const app = express();
 
-// Mount express json middleware after Better Auth handler
-// or only apply it to routes that don't interact with Better Auth
+ 
+app.all("/api/auth/*", toNodeHandler(auth));
+
 app.use(express.json());
 app.use(aiRouter)
 app.use(cors({ origin: ["http://localhost:5173"] }));

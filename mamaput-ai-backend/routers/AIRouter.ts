@@ -1,5 +1,5 @@
 import express from "express";
-import { getMeals } from "../services/AIService.js";
+import { getMeals } from "../services/AIService.ts";
 
 export const aiRouter = express.Router()
  
