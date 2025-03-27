@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import SettingsNavBar from "../SettingsComponent/SettingsNavBar";
+import SideNavbar from "../MainDashboardComponents/SideNavbar";
 
-const SettingsLayout = ({ children }) => {
+const MainDashboardLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -15,8 +15,8 @@ const SettingsLayout = ({ children }) => {
       }
     };
     
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [isMobileMenuOpen]);
 
   return (
@@ -27,7 +27,7 @@ const SettingsLayout = ({ children }) => {
           isSidebarCollapsed ? "w-16" : "w-64"
         }`}
       >
-        <SettingsNavBar 
+        <SideNavbar 
           isCollapsed={isSidebarCollapsed} 
           setIsCollapsed={setIsSidebarCollapsed} 
         />
@@ -54,7 +54,7 @@ const SettingsLayout = ({ children }) => {
           >
             <X className="h-5 w-5" />
           </button>
-          <SettingsNavBar />
+          <SideNavbar />
         </div>
       </div>
 
@@ -62,11 +62,11 @@ const SettingsLayout = ({ children }) => {
       <div className="flex-1 w-full">
         {/* Mobile Header */}
         <div className="md:hidden flex items-center justify-between p-4 bg-white shadow-sm">
-          <h1 className="text-xl font-bold">Settings</h1>
+          <h1 className="text-xl font-bold">Dashboard</h1>
           <button
             onClick={() => setIsMobileMenuOpen(true)}
             className="p-2 rounded-md bg-gray-100"
-            aria-label="Open settings menu"
+            aria-label="Open dashboard menu"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -81,8 +81,8 @@ const SettingsLayout = ({ children }) => {
   );
 };
 
-SettingsLayout.propTypes = {
+MainDashboardLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default SettingsLayout;
+export default MainDashboardLayout;
