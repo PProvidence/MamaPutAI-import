@@ -10,6 +10,8 @@ const google = createGoogleGenerativeAI({
 export async function getMeals(req: Request, res: Response) {
   const { allergies, health_conditions, dietary_conditions } = req.body;
 
+  const uniqueSeed = Date.now();
+
   try {
     const { text } = await generateText({
       model: google("gemini-2.0-flash-001"),
@@ -34,8 +36,8 @@ Ensure that every day’s menu features unique dishes and that you keep the foll
     Health conditions: Take this into consideration ${health_conditions}
 
     Dietary conditions: Take this into consideration ${dietary_conditions}
-
-All meals must be authentic African dishes. The output should follow this example format:
+    All meals must be authentic African dishes, and every dish should be unique and not repeated on any day of the week. Please randomize the dishes for each generation. The current seed is ${uniqueSeed}.
+ The output should follow this example format:
 
 [
   {

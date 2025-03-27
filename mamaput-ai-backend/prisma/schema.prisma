@@ -11,7 +11,6 @@ datasource db {
 model User {
   id                  String       @id
   email               String       @unique
-  username            String
   password            String?
   height              Int?
   weight              Int?
