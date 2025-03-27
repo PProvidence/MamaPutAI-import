@@ -1,7 +1,7 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { configDotenv } from "dotenv";
 import { generateText } from "ai";
-import { Request, Response } from "express";
+import type { Request, Response } from 'express';
 configDotenv({ path: "./.env" });
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,

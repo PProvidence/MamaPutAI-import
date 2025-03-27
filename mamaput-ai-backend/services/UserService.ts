@@ -1,6 +1,7 @@
+import type { Request, Response } from 'express';
 import { prisma } from "../lib/prisma.js";
 
-export async function editUser(req, res) {
+export async function editUser(req: Request, res: Response) {
   try {
     const user = req.body;
     await prisma.user.update({
@@ -11,6 +12,6 @@ export async function editUser(req, res) {
     });
     res.json("Updated Successfully");
   } catch (error) {
-    res.json(erorr);
+    res.json(error);
   }
 }
