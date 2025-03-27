@@ -2,16 +2,18 @@
   "name": "mamaput-ai-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.ts"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.4.1",
   "dependencies": {
+    "@ai-sdk/google": "^1.2.3",
+    "ai": "^4.2.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
