@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String       @id
+  email               String       @unique
+  username            String
+  password            String?
+  height              Int?
+  weight              Int?
+  DOB                 DateTime?
+  nationality         Nationality?
+  gender              Gender?
+  goal                Goal?
+  allergies           String[]
+  health_conditions   String[]
+  dietary_preferences String[]
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Goal {
+  GainWeight
+  LoseWeight
+  ManageHealthCondition
+  None
+}
+
+enum Nationality {
+  Nigeria
+  Togo
+  Ghana
+}
