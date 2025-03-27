@@ -5,6 +5,9 @@ import SettingsLayout from "./components/layouts/SettingsLayout";
 import MainDashboardLayout from "./components/layouts/MainDashboardLayout";
 import NutritionDetailComponent from './components/MainDashboardComponents/NutritionDetailComponent';
 import ProfileSettings from "./pages/settings/ProfileSettings";
+import AccountSettings from "./pages/settings/AccountSettings";
+import Preferences from "./pages/settings/Preferences";
+import NotificationSettings from "./pages/settings/NotificationSettings";
 import Home from "./pages/Home";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
@@ -62,13 +65,37 @@ function App() {
           }
         />
         <Route
+          path="/settings/account"
+          element={
+            <SettingsLayout>
+              <AccountSettings />
+            </SettingsLayout>
+          }
+        />
+        <Route
+          path="/settings/preferences"
+          element={
+            <SettingsLayout>
+              <Preferences />
+            </SettingsLayout>
+          }
+        />
+        <Route
+          path="/settings/notifications"
+          element={
+            <SettingsLayout>
+              <NotificationSettings />
+            </SettingsLayout>
+          }
+        />
+        <Route
           path="/settings/profile"
           element={
             <SettingsLayout>
               <ProfileSettings />
             </SettingsLayout>
           }
-        />
+        />       
         <Route
           path="/dashboard"
           element={
@@ -104,15 +131,15 @@ function App() {
               </MainDashboardLayout>
             }
           />
-        <Route
-          path="/feedback"
-          element={
-            <MainDashboardLayout>
-              <Feedback />
-            </MainDashboardLayout>
-          }
-        />
-      </Routes>
+          <Route
+            path="/feedback"
+            element={
+              <MainDashboardLayout>
+                <Feedback />
+              </MainDashboardLayout>
+            }
+          />
+        </Routes>
     </Router>
   );
 }
