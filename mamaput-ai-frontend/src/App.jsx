@@ -8,6 +8,10 @@ import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import DieticianPage from "./pages/DieticianPage";
 import FAQs from "./pages/FAQs";
+import SignupPage from "./pages/Auth_pages/signup";
+import LoginPage from "./pages/Auth_pages/login";
+import Onboarding from "./pages/Auth_pages/onboarding";
+
 
 function App() {
   return (
@@ -61,6 +65,9 @@ function App() {
             </SettingsLayout>
           }
         />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/onboarding" element={<Onboarding />} />
       </Routes>
     </Router>
   );
