@@ -5,7 +5,6 @@ import {
   LayoutDashboard,
   UserRoundPen,
   BookUser,
-  LockKeyhole,
   BellRing,
   Cookie,
   ChevronLeft,
@@ -34,7 +33,6 @@ const SettingsNavBar = ({ isCollapsed, setIsCollapsed }) => {
     { title: "Back to dashboard", link: "/dashboard", icon: LayoutDashboard },
     { title: "Profile Settings", link: "/settings/profile", icon: UserRoundPen },
     { title: "Account Settings", link: "/settings/account", icon: BookUser },
-    { title: "Security Settings", link: "/settings/security", icon: LockKeyhole },
     { title: "Notification Settings", link: "/settings/notifications", icon: BellRing },
     { title: "Preferences", link: "/settings/preferences", icon: Cookie },
   ];
