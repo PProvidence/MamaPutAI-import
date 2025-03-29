@@ -13,12 +13,16 @@ import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import DieticianPage from "./pages/DieticianPage";
 import FAQs from "./pages/FAQs";
+import SignupPage from "./pages/Auth_pages/signup";
+import LoginPage from "./pages/Auth_pages/login";
+import Onboarding from "./pages/Auth_pages/onboarding";
 import Dashboard from "./pages/MainDashboard/Dashboard";
 import MealPlans from "./pages/MainDashboard/MealPlans";
 import NutritionTracker from "./pages/MainDashboard/NutriTracker";
 import Reminder from "./pages/MainDashboard/Reminder";
 import History from "./pages/MainDashboard/History";
 import Feedback from "./pages/MainDashboard/Feedback";
+
 
 function App() {
   return (
@@ -123,6 +127,10 @@ function App() {
             </MainDashboardLayout>
           }
         />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+      </Routes>
           <Route
             path="/history"
             element={
