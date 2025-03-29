@@ -23,7 +23,6 @@ import Reminder from "./pages/MainDashboard/Reminder";
 import History from "./pages/MainDashboard/History";
 import Feedback from "./pages/MainDashboard/Feedback";
 
-
 function App() {
   return (
     <Router>
@@ -45,7 +44,7 @@ function App() {
           }
         />
         <Route
-          path="/pricing"
+          path="/features"
           element={
             <LandingPageLayout>
               <Features />
@@ -99,7 +98,7 @@ function App() {
               <ProfileSettings />
             </SettingsLayout>
           }
-        />       
+        />
         <Route
           path="/dashboard"
           element={
@@ -115,7 +114,7 @@ function App() {
               <MealPlans />
             </MainDashboardLayout>
           }
-        /> 
+        />
         <Route path="/nutrition-tracker" element={<MainDashboardLayout><NutritionTracker /></MainDashboardLayout>}>
           <Route path=":nutrient" element={<NutritionDetailComponent />} />
         </Route>
@@ -127,27 +126,26 @@ function App() {
             </MainDashboardLayout>
           }
         />
+        <Route
+          path="/history"
+          element={
+            <MainDashboardLayout>
+              <History />
+            </MainDashboardLayout>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <MainDashboardLayout>
+              <Feedback />
+            </MainDashboardLayout>
+          }
+        />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<Onboarding />} />
       </Routes>
-          <Route
-            path="/history"
-            element={
-              <MainDashboardLayout>
-                <History />
-              </MainDashboardLayout>
-            }
-          />
-          <Route
-            path="/feedback"
-            element={
-              <MainDashboardLayout>
-                <Feedback />
-              </MainDashboardLayout>
-            }
-          />
-        </Routes>
     </Router>
   );
 }
