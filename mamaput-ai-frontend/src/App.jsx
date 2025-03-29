@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LandingPageLayout from "./components/layouts/LandingPageLayout";
 import SettingsLayout from "./components/layouts/SettingsLayout";
 import MainDashboardLayout from "./components/layouts/MainDashboardLayout";
-import NutritionDetailComponent from './components/MainDashboardComponents/NutritionDetailComponent';
+import NutritionDetailComponent from "./components/MainDashboardComponents/NutritionDetailComponent";
 import ProfileSettings from "./pages/settings/ProfileSettings";
 import AccountSettings from "./pages/settings/AccountSettings";
 import Preferences from "./pages/settings/Preferences";
@@ -35,6 +35,9 @@ function App() {
             </LandingPageLayout>
           }
         />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route
           path="/pricing"
           element={
@@ -115,9 +118,24 @@ function App() {
             </MainDashboardLayout>
           }
         />
-        <Route path="/nutrition-tracker" element={<MainDashboardLayout><NutritionTracker /></MainDashboardLayout>}>
-          <Route path=":nutrient" element={<NutritionDetailComponent />} />
-        </Route>
+        <Route
+          path="/nutrition-tracker"
+          element={
+            <MainDashboardLayout>
+              <NutritionTracker />
+            </MainDashboardLayout>
+          }
+        />
+
+        <Route
+          path="/nutrition-tracker/:nutrient"
+          element={
+            <MainDashboardLayout>
+              <NutritionDetailComponent />
+            </MainDashboardLayout>
+          }
+        />
+
         <Route
           path="/reminders"
           element={
@@ -142,9 +160,6 @@ function App() {
             </MainDashboardLayout>
           }
         />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/onboarding" element={<Onboarding />} />
       </Routes>
     </Router>
   );

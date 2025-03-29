@@ -112,7 +112,7 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               className="btn--text-white bg-black py-2 px-4"
-              href="/get-started"
+              href="/signup"
             >
               Get Started
             </a>
@@ -195,7 +195,7 @@ const Home = () => {
           Ready to start eating good?
         </h3>
         <Link
-          to="/get-started"
+          to="/signup"
           className="block uppercase btn--text-white bg-black rounded text-lg md:text-xs"
         >
           Get Started

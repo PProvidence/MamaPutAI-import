@@ -62,7 +62,7 @@ const NavBar = () => {
           </li>
           <li>
             <Link
-              to="/get-started"
+              to="/signup"
               onClick={() => setIsOpen(false)}
               className="block uppercase btn--text-white bg-black rounded text-lg md:text-xs"
             >
