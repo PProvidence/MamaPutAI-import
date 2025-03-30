@@ -1,158 +1,107 @@
-// import React from 'react';
-import { Link } from "react-router-dom";
-import { Bell, Settings, User } from "lucide-react";
+import Banner from '../../utils/banner';
+import { useSelector } from "react-redux";
+import Header from '../../components/MainDashboardComponents/Header';
+import RemindersSection from '../../components/MainDashboardComponents/ReminderSection';
+import MealPlanSection from '../../components/MainDashboardComponents/MealPlanSection';
 
 const Dashboard = () => {
+   const { calorieIntake = 2200, calorieGoal = 2000, bmi = 25, carbIntake = 180, proteinIntake = 90, fatIntake = 80 } =
+    useSelector((state) => state.userSettings.profileState) || {};
+
+    // 🟢 Progress percentages
+    const caloriePercentage = Math.min((calorieIntake / (calorieGoal || 2000)) * 100, 100);
+    const bmiPercentage = Math.min((bmi / 40) * 100, 100);
+
+  const carbPercentage = Math.min((carbIntake / 250) * 100, 100); // Assuming 250g is the daily carb goal
+  const proteinPercentage = Math.min((proteinIntake / 150) * 100, 100); // Assuming 150g protein goal
+  const fatPercentage = Math.min((fatIntake / 70) * 100, 100); // Assuming 70g fat goal
+  
+    // 🎨 Change BMI color based on range dynamically
+    const getBmiColor = (bmi) => {
+      if (bmi < 18.5) return "text-blue-500"; // Underweight
+      if (bmi >= 18.5 && bmi < 24.9) return "text-green-500"; // Normal weight
+      if (bmi >= 25 && bmi < 29.9) return "text-yellow-500"; // Overweight
+      return "text-red-500"; // Obese
+    };
+
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 font-instrument-sans bg-gray-50 min-h-screen">
       {/* Top Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Howdy John!</h1>
-          <p className="text-sm text-gray-600">16 MAR 2025</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-            You had Amala & Ewedus for lunch yesterday - craving it again?
-          </div>
-          <div className="flex space-x-2">
-            <Link to="">
-              <Bell className="text-gray-600 cursor-pointer" />
-            </Link>
-            <Link to="/settings/account">
-              <Settings className="text-gray-600 cursor-pointer" />
-            </Link>
-            <Link to="/settings/profile">
-              <User className="text-gray-600 cursor-pointer" />
-            </Link>
-          </div>
-        </div>
-      </div>
-
+      <Header />
+      {/* Collapsible banner */}
+      <Banner />
       {/* Health Data Section */}
-      <div className="grid grid-cols-3 gap-6 mb-8">
-        {/* Calorie Intake */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-4">Calorie Intake</h3>
-          <div className="flex items-center">
-            <div
-              className="radial-progress text-red-500"
-              style={{ "--value": 60 }}
-            >
-              <span className="text-2xl font-bold">1200</span>
-              <p className="text-xs text-gray-500">Per day to reach 70 lbs</p>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm">1200/2000</p>
+      <div className="grid grid-cols-3 gap-6">
+        {/* 🔴 Calorie Intake Card */}
+        <div className="bg-white shadow-md rounded-lg p-6 text-center">
+          <h3 className="text-lg font-semibold mb-4">Calorie Intake (per day)</h3>
+          <div className="relative flex justify-center">
+            <div className="radial-progress text-red-500" style={{ "--value": caloriePercentage }}>
+              <span className="text-2xl font-bold">{calorieIntake}</span>
+              <p className="text-sm text-gray-500">Calories</p>
             </div>
           </div>
+          <p className="mt-2 text-gray-600">{calorieIntake}/{calorieGoal || 2000}</p>
+          <p className="text-xs text-red-500">Per day to reach healthy weight</p>
         </div>
 
-        {/* Macro Nutrient Ratios */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        {/* 🥦 Macronutrient Ratios Card */}
+        <div className="bg-white shadow-md rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">Macro Nutrient Ratios</h3>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Carbohydrates</span>
-              <span>18.75 g</span>
+              <span>{carbIntake} g</span>
             </div>
+            <progress className="progress progress-accent w-full" value={carbPercentage} max="100"></progress>
+
             <div className="flex justify-between">
               <span>Protein</span>
-              <span>487 g</span>
+              <span>{proteinIntake} g</span>
             </div>
+            <progress className="progress progress-success w-full" value={proteinPercentage} max="100"></progress>
+
             <div className="flex justify-between">
               <span>Fats</span>
-              <span>136.67 g</span>
+              <span>{fatIntake} g</span>
             </div>
+            <progress className="progress progress-warning w-full" value={fatPercentage} max="100"></progress>
           </div>
         </div>
 
-        {/* Body Mass Index */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        {/* 🏋️‍♂️ BMI Card */}
+        <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <h3 className="text-lg font-semibold mb-4">Body Mass Index</h3>
-          <div className="flex items-center">
-            <div
-              className="radial-progress text-green-500"
-              style={{ "--value": 70 }}
-            >
-              <span className="text-2xl font-bold">11.7</span>
-              <p className="text-xs text-gray-500">Underweight</p>
+          <div className="relative flex justify-center">
+            <div className={`radial-progress ${getBmiColor(bmi)}`} style={{ "--value": bmiPercentage }}>
+              <span className="text-2xl font-bold">{bmi}</span>
+              <p className="text-sm text-gray-500">BMI</p>
             </div>
           </div>
+          <p className="mt-2 text-gray-600">Your BMI:</p>
+          <p className={`text-md font-semibold ${getBmiColor(bmi)}`}>
+            {bmi < 18.5 ? "Underweight" : bmi < 24.9 ? "Normal" : bmi < 29.9 ? "Overweight" : "Obese"}
+          </p>
         </div>
       </div>
+
 
       {/* Personalized Meal Plan */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Personalized Meal Plan</h2>
-          <div className="flex space-x-2">
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg">
-              Today
-            </button>
-            <button className="px-4 py-2 text-gray-600 rounded-lg">
-              This week
-            </button>
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg">
-              + Generate new plan
-            </button>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg">
-              Filter
-            </button>
-          </div>
-        </div>
-
-        {/* Meal Cards */}
-        <div className="grid grid-cols-4 gap-4">
-          {[
-            {
-              meal: "Breakfast",
-              description:
-                "Pap/Garri with milk, Bean Pudding (moi moi) and fried fish",
-            },
-            {
-              meal: "Snack",
-              description: "Meat pie and watermelon juice",
-            },
-            {
-              meal: "Lunch",
-              description:
-                "Jollof rice, fried plantain and roasted turkey with water",
-            },
-            {
-              meal: "Dinner",
-              description: "Amala with Ewedus, efo riro and meat, with water",
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="border rounded-lg overflow-hidden shadow-sm"
-            >
-              <div className="bg-gray-200 h-40"></div>
-              <div className="p-4">
-                <h4 className="font-semibold mb-2">{item.meal}</h4>
-                <p className="text-sm text-gray-600">{item.description}</p>
-                <button className="mt-2 w-full py-2 bg-green-500 text-white rounded-lg">
-                  Select Meal
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <MealPlanSection />
 
       {/* Reminders */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Reminders</h2>
-          <button className="px-4 py-2 bg-green-500 text-white rounded-lg">
-            + Create reminders
-          </button>
-        </div>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          Its time for breakfast
-        </div>
+      <RemindersSection />
+
+      {/* Recipes */}
+      <div className="bg-white shadow-md rounded-lg p-6 mt-6">
+        <h3 className="text-lg font-semibold mb-4">Recipes</h3>
+        <p className="text-gray-600">Explore and save your favorite recipes here.</p>
+        {/* Add recipe components or links here */}
+        {/* <TodaysRecipes /> */}
+
+
       </div>
+
     </div>
   );
 };
