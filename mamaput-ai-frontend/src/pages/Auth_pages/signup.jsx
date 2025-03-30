@@ -107,10 +107,11 @@ const SignupPage = () => {
       {
         email: formData.email,
         otp: OTP,
+        
       },
       {
         onSuccess() {
-          navigate("/dashboard");
+          navigate("http://localhost:5173/dashboard");
         },
       }
     );
