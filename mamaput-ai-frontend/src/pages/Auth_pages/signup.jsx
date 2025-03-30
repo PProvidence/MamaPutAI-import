@@ -111,7 +111,7 @@ const SignupPage = () => {
       },
       {
         onSuccess() {
-          navigate("/dashboard");
+          navigate("/onboarding");
         },
       }
     );
