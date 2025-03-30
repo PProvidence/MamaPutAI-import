@@ -1,8 +1,11 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+// Layouts
 import LandingPageLayout from "./components/layouts/LandingPageLayout";
 import SettingsLayout from "./components/layouts/SettingsLayout";
 import MainDashboardLayout from "./components/layouts/MainDashboardLayout";
+
+//Pages
 import NutritionDetailComponent from './components/MainDashboardComponents/NutritionDetailComponent';
 import ProfileSettings from "./pages/settings/ProfileSettings";
 import AccountSettings from "./pages/settings/AccountSettings";
@@ -14,9 +17,10 @@ import Pricing from "./pages/Pricing";
 import DieticianPage from "./pages/DieticianPage";
 import FAQs from "./pages/FAQs";
 import Dashboard from "./pages/MainDashboard/Dashboard";
+import NotificationsPage from "./pages/MainDashboard/Notifications";
 import MealPlans from "./pages/MainDashboard/MealPlans";
 import NutritionTracker from "./pages/MainDashboard/NutriTracker";
-import Reminder from "./pages/MainDashboard/Reminder";
+import Reminders from "./pages/MainDashboard/Reminder";
 import History from "./pages/MainDashboard/History";
 import Feedback from "./pages/MainDashboard/Feedback";
 
@@ -105,6 +109,14 @@ function App() {
           }
         />
         <Route
+          path="/dashboard/notifications"
+          element={
+            <MainDashboardLayout>
+              <NotificationsPage />
+            </MainDashboardLayout>
+          }
+        />
+        <Route
           path="/meal-plans"
           element={
             <MainDashboardLayout>
@@ -113,33 +125,33 @@ function App() {
           }
         /> 
         <Route path="/nutrition-tracker" element={<MainDashboardLayout><NutritionTracker /></MainDashboardLayout>}>
-          <Route path=":nutrient" element={<NutritionDetailComponent />} />
+          <Route path=":id " element={<NutritionDetailComponent />} />
         </Route>
         <Route
           path="/reminders"
           element={
             <MainDashboardLayout>
-              <Reminder />
+              <Reminders />
             </MainDashboardLayout>
           }
         />
-          <Route
-            path="/history"
-            element={
-              <MainDashboardLayout>
-                <History />
-              </MainDashboardLayout>
-            }
-          />
-          <Route
-            path="/feedback"
-            element={
-              <MainDashboardLayout>
-                <Feedback />
-              </MainDashboardLayout>
-            }
-          />
-        </Routes>
+        <Route
+          path="/history"
+          element={
+            <MainDashboardLayout>
+              <History />
+            </MainDashboardLayout>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <MainDashboardLayout>
+              <Feedback />
+            </MainDashboardLayout>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
