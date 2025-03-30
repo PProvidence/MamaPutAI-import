@@ -66,6 +66,7 @@ const SignupPage = () => {
     }));
   };
 
+  console.log(formData)
   const handleSubmit = async () => {
     setIsLoading((prev) => ({ ...prev, create: true }));
 

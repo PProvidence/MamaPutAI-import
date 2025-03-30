@@ -1,5 +1,5 @@
 import express from "express";
-import { editUser, getUser } from "../services/UserService.ts";
+import { editUser, getUser } from "../services/UserService.js";
 
 export const userRouter = express.Router()
  
