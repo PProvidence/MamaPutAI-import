@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.ts";
 import type { User } from "@prisma/client";
+import { auth } from "../lib/auth.ts";
+import { fromNodeHeaders } from "better-auth/node";
 
 export async function editUser(req: Request, res: Response) {
   if (req.method !== "POST") {
@@ -8,11 +10,18 @@ export async function editUser(req: Request, res: Response) {
     return;
   }
   try {
-    const id: string = req.params.id;
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session) {
+      res.status(404).json("No User Found");
+      return;
+    }
     const user: Partial<User> = req.body;
     await prisma.user.update({
       where: {
-        id,
+        id: session.user.id,
       },
       data: user,
     });
@@ -30,14 +39,16 @@ export async function getUser(req: Request, res: Response) {
   }
 
   try {
-    const id: string | undefined = req.params.id;
-    if (!id) {
-      res.status(400).json({ error: "User ID is required" });
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session) {
+      res.status(404).json("No User Found");
       return;
     }
-
     const user = await prisma.user.findFirst({
-      where: { id },
+      where: { id: session.user.id },
     });
 
     if (!user) {

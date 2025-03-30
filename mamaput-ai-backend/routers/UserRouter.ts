@@ -3,5 +3,5 @@ import { editUser, getUser } from "../services/UserService.ts";
 
 export const userRouter = express.Router()
  
-userRouter.post('/edit/:id', editUser)
-userRouter.get('/:id', getUser)
+userRouter.post('/edit/me', editUser)
+userRouter.get('/me', getUser)

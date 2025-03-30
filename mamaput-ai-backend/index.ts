@@ -10,7 +10,7 @@ const app = express();
 
 
 app.all("/api/auth/*", toNodeHandler(auth));
-app.use(cors({ origin: ["http://localhost:5173"] }));
+app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
 
 app.use(express.json());
 

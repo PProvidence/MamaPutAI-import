@@ -2,6 +2,9 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { configDotenv } from "dotenv";
 import { generateText } from "ai";
 import type { Request, Response } from "express";
+import { prisma } from "../lib/prisma.ts";
+import { auth } from "../lib/auth.ts";
+import { fromNodeHeaders } from "better-auth/node";
 configDotenv({ path: "./.env" });
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -30,8 +33,25 @@ function getRandomCuisines() {
 }
 
 export async function getMeals(req: Request, res: Response) {
+  const session = await auth.api.getSession({
+    headers: fromNodeHeaders(req.headers),
+  });
 
-  const { allergies, health_conditions, dietary_conditions } = req.body;
+  if (!session) {
+    res.status(404).json("No User Found");
+    return;
+  }
+
+  const user = await prisma.user.findFirst({
+    where: {
+      id: session.user.id,
+    },
+  });
+
+  if (!user) {
+    res.status(404).json("No User Found");
+    return;
+  }
 
   const timestamp = new Date().toISOString();
   const randomCuisines = getRandomCuisines();
@@ -48,9 +68,9 @@ export async function getMeals(req: Request, res: Response) {
                - Focus specifically on these regional cuisines today: ${randomCuisines}
                - Current timestamp: ${timestamp}
                - Ensure each generation of meals is unique.
-               - Consider user allergies: ${allergies}
-               - Consider health conditions: ${health_conditions}
-               - Consider dietary restrictions: ${dietary_conditions}
+               - Consider user allergies: ${user.allergies}
+               - Consider health conditions: ${user.health_conditions}
+               - Consider dietary restrictions: ${user.dietary_preferences}
                
                The output should follow this example format:
                [
@@ -73,6 +93,8 @@ export async function getMeals(req: Request, res: Response) {
     const formattedText = text.replaceAll("`", "").replace("json", "");
     res.json(JSON.parse(formattedText));
   } catch (error: any) {
-    res.status(500).json({ error: "Error generating meals", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Error generating meals", details: error.message });
   }
 }
