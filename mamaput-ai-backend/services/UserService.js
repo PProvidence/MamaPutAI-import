@@ -1,10 +1,8 @@
-import type { Request, Response } from "express";
-import { prisma } from "../lib/prisma.ts";
-import type { User } from "@prisma/client";
-import { auth } from "../lib/auth.ts";
 import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../lib/auth.js";
+import { prisma } from "../lib/prisma.js";
 
-export async function editUser(req: Request, res: Response) {
+export async function editUser(req, res) {
   if (req.method !== "POST") {
     res.status(405).json("Method Not Allowed");
     return;
@@ -18,7 +16,7 @@ export async function editUser(req: Request, res: Response) {
       res.status(404).json("No User Found");
       return;
     }
-    const user: Partial<User> = req.body;
+    const user = req.body;
     await prisma.user.update({
       where: {
         id: session.user.id,
@@ -32,7 +30,7 @@ export async function editUser(req: Request, res: Response) {
   }
 }
 
-export async function getUser(req: Request, res: Response) {
+export async function getUser(req, res) {
   if (req.method !== "GET") {
     res.status(405).json({ error: "Method Not Allowed" });
     return;

@@ -1,10 +1,9 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { configDotenv } from "dotenv";
 import { generateText } from "ai";
-import type { Request, Response } from "express";
-import { prisma } from "../lib/prisma.ts";
-import { auth } from "../lib/auth.ts";
 import { fromNodeHeaders } from "better-auth/node";
+import { configDotenv } from "dotenv";
+import { auth } from "../lib/auth.js";
+import { prisma } from "../lib/prisma.js";
 configDotenv({ path: "./.env" });
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -32,7 +31,7 @@ function getRandomCuisines() {
   return shuffled.slice(0, 3 + Math.floor(Math.random() * 2)).join(", ");
 }
 
-export async function getMeals(req: Request, res: Response) {
+export async function getMeals(req, res) {
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   });
@@ -90,9 +89,9 @@ export async function getMeals(req: Request, res: Response) {
       ],
     });
 
-    const formattedText = text.replaceAll("`", "").replace("json", "");
+    const formattedText = text.replace("```", "").replace("json", "");
     res.json(JSON.parse(formattedText));
-  } catch (error: any) {
+  } catch (error) {
     res
       .status(500)
       .json({ error: "Error generating meals", details: error.message });
