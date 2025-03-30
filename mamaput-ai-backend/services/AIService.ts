@@ -43,28 +43,68 @@ export async function getMeals(req: Request, res: Response) {
       messages: [
         {
           role: "user",
-          content: `You are a food nutrition expert specializing in African cuisine. Generate a valid JSON array that represents a balanced weekly menu. For each day of the week, include one breakfast, one snack, one lunch, and one dinner.
+          content: `You are a food nutrition expert specializing in African cuisine. Generate a valid JSON array that represents a balanced weekly menu, including mineral water intake and detailed nutrients for each meal.
                - Focus specifically on these regional cuisines today: ${randomCuisines}
                - Current timestamp: ${timestamp}
                - Ensure each generation of meals is unique.
                - Consider user allergies: ${allergies}
                - Consider health conditions: ${health_conditions}
                - Consider dietary restrictions: ${dietary_conditions}
-               
+               - Include a recommended **water intake** (in liters) for each meal.
+
                The output should follow this example format:
                [
                {
                "day": "Monday",
                "meals": [
-               { "type": "Breakfast", "name": "...", "numCalories": ..., "carbohydrates": ..., "protein": ..., "fats": ... },
-               { "type": "Snack", "name": "...", "numCalories": ... },
-               { "type": "Lunch", "name": "...", "numCalories": ... },
-               { "type": "Dinner", "name": "...", "numCalories": ... }
+                 { 
+                   "type": "Breakfast", 
+                   "name": "Ogi with Akara", 
+                   "numCalories": 400, 
+                   "carbohydrates": 50, 
+                   "protein": 20, 
+                   "fats": 10, 
+                     "calcium": 50, 
+                     "iron": 8, 
+                     "magnesium": 30,
+                   "waterIntake": 0.5
+                 },
+                 { 
+                   "type": "Snack", 
+                   "name": "Roasted Plantain", 
+                   "numCalories": 250, 
+                     "potassium": 60, 
+                     "iron": 5,
+                   "waterIntake": 0.3
+                 },
+                 { 
+                   "type": "Lunch", 
+                   "name": "Jollof Rice with Grilled Chicken", 
+                   "numCalories": 600, 
+                   "carbohydrates": 70, 
+                   "protein": 40, 
+                   "fats": 25, 
+                     "zinc": 10, 
+                     "selenium": 4
+                   "waterIntake": 0.6
+                 },
+                 { 
+                   "type": "Dinner", 
+                   "name": "Vegetable Soup with Pounded Yam", 
+                   "numCalories": 550, 
+                   "carbohydrates": 60, 
+                   "protein": 30, 
+                   "fats": 20, 
+
+                     "calcium": 40, 
+                     "magnesium": 20,
+                   "waterIntake": 0.7
+                 }
                ]
                },
                { "day": "Tuesday", "meals": [ ... ] },
                ...
-               ]`,
+               ]` 
         },
       ],
     });

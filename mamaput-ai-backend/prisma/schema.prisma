@@ -28,6 +28,7 @@ model User {
   updatedAt           DateTime
   sessions            Session[]
   accounts            Account[]
+   meals              Meal[]
 
   @@map("user")
 }
@@ -94,3 +95,26 @@ model Verification {
 
   @@map("verification")
 }
+
+model Meal {
+  id          String   @id @default(uuid()) 
+  name        String  
+  description String?  
+  calories    Float    
+  nutrients   Json    
+  userId      String   
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
+
+  @@map("meal")
+}
+
+
+model Feedback {
+  id        String   @id @default(uuid())
+  emotion   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
