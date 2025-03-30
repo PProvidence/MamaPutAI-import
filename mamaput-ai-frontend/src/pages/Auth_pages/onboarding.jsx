@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { Check } from "lucide-react";
+import { CiCalendar } from "react-icons/ci";
+
 
 const side = [
   {
@@ -85,6 +87,9 @@ const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState("gender"); // 'gender' | 'goal' | 'background' | 'allergies'
   const [selectedGender, setSelectedGender] = useState("");
   const [selectedGoal, setSelectedGoal] = useState([]);
+  const [unit, setUnit] = useState("metric"); // "metric" or "imperial"
+  const [height, setHeight] = useState({ cm: "", feet: "", inches: "" });
+  const [weight, setWeight] = useState({ kg: "", lbs: "" });
   const currentIndex = step.indexOf(currentStep);
   const nextStep = () => {
     const currentIndex = step.indexOf(currentStep);
@@ -104,6 +109,25 @@ const Onboarding = () => {
           ? prevGoal.filter((g) => g !== goal) // Remove if already selected
           : [...prevGoal, goal] // Add if not selected
     );
+  };
+  const toggleUnit = () => {
+    if (unit === "metric") {
+      const totalInches = (height.cm || 0) / 2.54;
+      const feet = Math.floor(totalInches / 12);
+      const inches = Math.round(totalInches % 12);
+      setHeight({ cm: "", feet, inches });
+
+      setWeight({ kg: "", lbs: Math.round((weight.kg || 0) * 2.20462) });
+      setUnit("imperial");
+    } else {
+      const cm = Math.round(
+        ((height.feet || 0) * 12 + (height.inches || 0)) * 2.54
+      );
+      setHeight({ cm, feet: "", inches: "" });
+
+      setWeight({ kg: Math.round((weight.lbs || 0) / 2.20462), lbs: "" });
+      setUnit("metric");
+    }
   };
 
   return (
@@ -280,7 +304,107 @@ const Onboarding = () => {
                 about you
               </p>
             </div>
-            <div className="flex justify-between mt-6  ">
+
+            {/* Unit Toggle */}
+            <div className="flex items-center my-4">
+              <span className="mr-2">Metric</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  onChange={toggleUnit}
+                  checked={unit === "imperial"}
+                />
+                <div className="w-12 h-6 bg-gray-300 peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-600 transition-colors relative">
+                  <span className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 transform peer-checked:translate-x-[1.5rem]"></span>
+                </div>
+              </label>
+              <span className="ml-2">Imperial</span>
+            </div>
+            <div className="flex gap-6">
+              {/* Height Input */}
+              <div className="my-4">
+                <label className="block font-semibold">Height</label>
+                {unit === "metric" ? (
+                  <input
+                    type="number"
+                    value={height.cm}
+                    onChange={(e) =>
+                      setHeight({ ...height, cm: e.target.value })
+                    }
+                    placeholder="Enter height in cm"
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                ) : (
+                  <div className="flex space-x-2">
+                    <input
+                      type="number"
+                      value={height.feet}
+                      onChange={(e) =>
+                        setHeight({ ...height, feet: e.target.value })
+                      }
+                      placeholder="Feet"
+                      className="border border-gray-300 p-2 rounded w-1/2"
+                    />
+                    <input
+                      type="number"
+                      value={height.inches}
+                      onChange={(e) =>
+                        setHeight({ ...height, inches: e.target.value })
+                      }
+                      placeholder="Inches"
+                      className="border border-gray-300 p-2 rounded w-1/2"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Weight Input */}
+              <div className="my-4">
+                <label className="block font-semibold">Weight</label>
+                {unit === "metric" ? (
+                  <input
+                    type="number"
+                    value={weight.kg}
+                    onChange={(e) =>
+                      setWeight({ ...weight, kg: e.target.value })
+                    }
+                    placeholder="Enter weight in kg"
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                ) : (
+                  <input
+                    type="number"
+                    value={weight.lbs}
+                    onChange={(e) =>
+                      setWeight({ ...weight, lbs: e.target.value })
+                    }
+                    placeholder="Enter weight in lbs"
+                    className="border border-gray-300  p-2 rounded w-full"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-gray-900">
+                Date of Birth
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  className="w-full p-2 pl-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-500 appearance-none"
+                  onFocus={(e) => (e.target.style.color = "black")} // Ensure input text turns black on focus
+                  style={{
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                />
+                {/* <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-600">
+                  <CiCalendar />
+                </span> */}
+              </div>
+            </div>
+            <div className="flex justify-between mt-6">
               <button
                 onClick={prevStep}
                 className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"

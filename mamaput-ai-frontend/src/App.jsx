@@ -130,24 +130,23 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route
+          path="/history"
+          element={
+            <MainDashboardLayout>
+              <History />
+            </MainDashboardLayout>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <MainDashboardLayout>
+              <Feedback />
+            </MainDashboardLayout>
+          }
+        />
       </Routes>
-          <Route
-            path="/history"
-            element={
-              <MainDashboardLayout>
-                <History />
-              </MainDashboardLayout>
-            }
-          />
-          <Route
-            path="/feedback"
-            element={
-              <MainDashboardLayout>
-                <Feedback />
-              </MainDashboardLayout>
-            }
-          />
-        </Routes>
     </Router>
   );
 }
