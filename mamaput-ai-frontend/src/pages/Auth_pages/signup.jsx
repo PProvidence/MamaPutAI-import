@@ -1,13 +1,14 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
-  FaCircleCheck,
-  FaGoogle,
   FaApple,
-  FaRegEyeSlash,
+  FaCircleCheck,
   FaRegEye,
+  FaRegEyeSlash,
 } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
 import { MdEmail } from "react-icons/md";
+import { Link, useNavigate } from "react-router-dom";
+import { authClient } from "../../../lib/authclient";
 
 const steps = [
   {
@@ -35,9 +36,17 @@ const SignupPage = () => {
     lastName: "",
     password: "",
   });
+  const [OTP, setOTP] = useState("");
+  const [isLoading, setIsLoading] = useState({
+    create: false,
+    verify: false,
+  });
+
+  const navigate = useNavigate();
 
   // Ensure all fields are filled before enabling the button
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const passwordHasNumber = /\d/.test(formData.password);
   const passwordHasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(formData.password);
   const isPasswordValid =
@@ -49,14 +58,72 @@ const SignupPage = () => {
     isPasswordValid;
 
   const handleChange = (e) => {
+    setError("");
+
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
+  const handleSubmit = async () => {
+    setIsLoading((prev) => ({ ...prev, create: true }));
+
+    try {
+      const { error } = await authClient.signUp.email({
+        email: formData.email,
+        password: formData.password,
+        name: `${formData.firstName} ${formData.lastName}`,
+      });
+
+      if (error) {
+        setError(error.message || "An unknown error occurred");
+        throw new Error(error.message);
+      }
+
+      const { error: verifyError } =
+        await authClient.emailOtp.sendVerificationOtp({
+          email: formData.email,
+          type: "email-verification",
+        });
+
+      if (verifyError) {
+        setError("");
+        setError(error.message);
+        throw new Error(error.message);
+      }
+
+      setStep("verify");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading((prev) => ({ ...prev, create: false }));
+    }
+  };
+
+  const handleVerify = async () => {
+    setIsLoading({ verify: true });
+    const { error } = await authClient.emailOtp.verifyEmail(
+      {
+        email: formData.email,
+        otp: OTP,
+      },
+      {
+        onSuccess() {
+          navigate("/dashboard");
+        },
+      }
+    );
+
+    if (error) {
+      setError(error.message || "An unknown error occurred");
+      throw new Error(error.message);
+    }
+    setIsLoading(prev => ({ ...prev, verify: false }));
+  };
+
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-white">
+    <div className="h-screen flex flex-col-reverse items-center justify-center lg:flex-row bg-white gap-16">
       {/* Left Section */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-start p-4 sm:p-6 md:p-12">
         {steps.map((step, index) => (
@@ -87,7 +154,7 @@ const SignupPage = () => {
 
               <button
                 onClick={() => setStep("signup")}
-                className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-2 rounded-lg font-semibold hover:bg-green-600 transition"
+                className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-2 rounded-lg font-semibold transition hover:bg-gray-50"
               >
                 <MdEmail />
                 Sign Up with Email
@@ -99,16 +166,25 @@ const SignupPage = () => {
                 <span className="text-gray-500">OR</span>
                 <div className="flex-1 border-t border-gray-300"></div>
               </div>
+              <div className="space-y-2">
+                <button
+                  onClick={async () => {
+                    await authClient.signIn.social({
+                      provider: "google",
+                      callbackURL: "http://localhost:5173/dashboard",
+                    });
+                  }}
+                  className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50"
+                >
+                  <FcGoogle />
+                  Continue with Google
+                </button>
 
-              <button className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold hover:bg-green-600 transition">
-                <FaGoogle />
-                Continue with Google
-              </button>
-
-              <button className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold hover:bg-green-600 transition">
-                <FaApple />
-                Continue with Apple
-              </button>
+                <button className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50">
+                  <FaApple />
+                  Continue with Apple
+                </button>
+              </div>
 
               <p className="mt-4 text-sm text-center">
                 Existing User?{" "}
@@ -128,7 +204,6 @@ const SignupPage = () => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  setStep("verify");
                 }}
               >
                 <label
@@ -222,14 +297,11 @@ const SignupPage = () => {
                 <p className="text-gray-400 font-medium text-xs mb-6">
                   Use 8 characters or more
                 </p>
+                <p className="text-red-500 text-center my-2">{error}</p>
                 <button
-                  type="submit"
-                  disabled={!isFormValid}
-                  className={`w-full text-white py-2 rounded-lg font-semibold transition ${
-                    isFormValid
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-green-200 cursor-not-allowed"
-                  }`}
+                  disabled={!isFormValid || isLoading.create}
+                  onClick={handleSubmit}
+                  className="w-full text-white py-2 rounded-lg font-semibold transition bg-green-600 hover:bg-green-700 disabled:bg-green-200 disabled:cursor-not-allowed"
                 >
                   Create Account
                 </button>
@@ -250,8 +322,8 @@ const SignupPage = () => {
                 Verify Email Address
               </h2>
               <p className="text-sm text-gray-600 mb-6">
-                To verify email, we’ve sent a one time password (OTP) to
-                johnDoe@gmail.com
+                To verify email, we’ve sent a one time password (OTP) to{" "}
+                {formData.email}
               </p>
               <label
                 htmlFor="number"
@@ -260,19 +332,38 @@ const SignupPage = () => {
                 OTP Code
               </label>
               <input
+                value={OTP}
+                onChange={(e) => {
+                  setError("");
+
+                  setOTP(e.target.value);
+                }}
                 type="text"
                 placeholder="Enter Code"
                 className="w-full p-3 mb-4 border border-gray-300 text-lg text-center tracking-widest focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 rounded-md"
                 required
               />
-              <button className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition">
+              <p className="text-red-500 text-center">{error}</p>
+              <button
+                disabled={isLoading.verify}
+                onClick={handleVerify}
+                className="bg-green-600 hover:bg-green-700 disabled:bg-green-200 disabled:cursor-not-allowed w-full text-white h-12 rounded-md font-semibold"
+              >
                 Confirm Email
               </button>
               <p className="mt-4 text-sm text-center">
-                Didn't get code?{" "}
-                <Link to="/login" className="text-green-600 font-semibold">
+                Didn&apos;t get code?{" "}
+                <button
+                  onClick={async () => {
+                    await authClient.emailOtp.sendVerificationOtp({
+                      email: formData.email,
+                      type: "email-verification",
+                    });
+                  }}
+                  className="text-green-600 font-semibold"
+                >
                   Resend
-                </Link>
+                </button>
               </p>
               <button
                 onClick={() => setStep("signup")}

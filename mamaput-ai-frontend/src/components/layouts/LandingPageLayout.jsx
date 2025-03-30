@@ -1,6 +1,6 @@
 // Layout for the landing pages
 import PropTypes from "prop-types";
-import Navbar from "../Navbar";
+import Navbar from "../navBar";
 
 
 const Layout = ({ children }) => {

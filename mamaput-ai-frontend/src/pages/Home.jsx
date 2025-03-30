@@ -6,8 +6,18 @@ import Features from "../components/featureBlock";
 // import heroMenuImg4 from "../assets/img/center.svg";
 import heroImage from "../assets/img/heroImage.svg";
 import { Link } from "react-router-dom";
+import { authClient } from "../../lib/authclient";
 
 const Home = () => {
+
+  const session = new Promise((resolve, reject) => {
+   authClient.getSession().then(resolve).catch(reject)
+
+  })
+
+  session
+  .then(s => console.log("Session:", s))
+  .catch(err => console.error("Error fetching session:", err));
   const featureList = [
     {
       icon: "NotePadText",
@@ -112,7 +122,7 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               className="btn--text-white bg-black py-2 px-4"
-              href="/get-started"
+              href="/signup"
             >
               Get Started
             </a>
@@ -195,7 +205,7 @@ const Home = () => {
           Ready to start eating good?
         </h3>
         <Link
-          to="/get-started"
+          to="/signup"
           className="block uppercase btn--text-white bg-black rounded text-lg md:text-xs"
         >
           Get Started
