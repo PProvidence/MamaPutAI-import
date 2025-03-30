@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LandingPageLayout from "./components/layouts/LandingPageLayout";
 import SettingsLayout from "./components/layouts/SettingsLayout";
 import MainDashboardLayout from "./components/layouts/MainDashboardLayout";
-
 //Pages
-import NutritionDetailComponent from './components/MainDashboardComponents/NutritionDetailComponent';
+import NutritionDetailComponent from "./components/MainDashboardComponents/NutritionDetailComponent";
+import NutritionDetailComponent from "./components/MainDashboardComponents/NutritionDetailComponent";
 import ProfileSettings from "./pages/settings/ProfileSettings";
 import AccountSettings from "./pages/settings/AccountSettings";
 import Preferences from "./pages/settings/Preferences";
@@ -16,6 +16,9 @@ import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import DieticianPage from "./pages/DieticianPage";
 import FAQs from "./pages/FAQs";
+import SignupPage from "./pages/Auth_pages/signup";
+import LoginPage from "./pages/Auth_pages/login";
+import Onboarding from "./pages/Auth_pages/onboarding";
 import Dashboard from "./pages/MainDashboard/Dashboard";
 import NotificationsPage from "./pages/MainDashboard/Notifications";
 import MealPlans from "./pages/MainDashboard/MealPlans";
@@ -36,6 +39,9 @@ function App() {
             </LandingPageLayout>
           }
         />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route
           path="/pricing"
           element={
@@ -45,7 +51,7 @@ function App() {
           }
         />
         <Route
-          path="/pricing"
+          path="/features"
           element={
             <LandingPageLayout>
               <Features />
@@ -99,7 +105,7 @@ function App() {
               <ProfileSettings />
             </SettingsLayout>
           }
-        />       
+        />
         <Route
           path="/dashboard"
           element={
@@ -123,10 +129,25 @@ function App() {
               <MealPlans />
             </MainDashboardLayout>
           }
-        /> 
-        <Route path="/nutrition-tracker" element={<MainDashboardLayout><NutritionTracker /></MainDashboardLayout>}>
-          <Route path=":id " element={<NutritionDetailComponent />} />
-        </Route>
+        />
+        <Route
+          path="/nutrition-tracker"
+          element={
+            <MainDashboardLayout>
+              <NutritionTracker />
+            </MainDashboardLayout>
+          }
+        />
+
+        <Route
+          path="/nutrition-tracker/:nutrient"
+          element={
+            <MainDashboardLayout>
+              <NutritionDetailComponent />
+            </MainDashboardLayout>
+          }
+        />
+
         <Route
           path="/reminders"
           element={

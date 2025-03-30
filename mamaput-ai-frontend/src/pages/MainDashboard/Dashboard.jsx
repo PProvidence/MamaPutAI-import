@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import Header from '../../components/MainDashboardComponents/Header';
 import RemindersSection from '../../components/MainDashboardComponents/ReminderSection';
 import MealPlanSection from '../../components/MainDashboardComponents/MealPlanSection';
-// import TodaysRecipes from '../../components/MainDashboardComponents/TodaysRecipes';
 
 const Dashboard = () => {
    const { calorieIntake = 2200, calorieGoal = 2000, bmi = 25, carbIntake = 180, proteinIntake = 90, fatIntake = 80 } =

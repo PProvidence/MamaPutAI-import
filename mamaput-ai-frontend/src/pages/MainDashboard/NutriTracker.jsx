@@ -29,15 +29,17 @@ const NutritionTracker = () => {
       </div>
       <div className="bg-white rounded-lg">
         {nutritionItems.map((item) => (
+           <Link to={`/nutrition-tracker/${item.toLowerCase().replace(/\s+/g, '-')}`}>
           <div
             key={item}
             className="flex font-semibold hover:text-pryGreen justify-between items-center p-4 border-b border-b-grey hover:bg-gray-50 transition"
           >
             <span>{item}</span>
-            <Link to={`/nutrition-tracker/${item.toLowerCase().replace(/\s+/g, '-')}`}>
+           
               <ChevronRight className="text-gray hover:text-pryGreen cursor-pointer" />
-            </Link>
+         
           </div>
+          </Link>
         ))}
       </div>
       <Outlet />
