@@ -46,7 +46,7 @@ const LoginPage = () => {
         },
         {
           onSuccess() {
-            navigate("http://localhost:5173/dashboard");
+            navigate("/dashboard");
           },
           onError(error) {
             console.log(error.response);
