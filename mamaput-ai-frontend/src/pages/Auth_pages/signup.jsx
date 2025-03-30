@@ -171,13 +171,8 @@ const SignupPage = () => {
                   onClick={async () => {
                     await authClient.signIn.social({
                       provider: "google",
-                    }, {
-                      onSuccess(){
-                        navigate("/dashboard");
-                      }
+                      callbackURL: "http://localhost:5173/dashboard",
                     });
-
-                  
                   }}
                   className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50"
                 >
