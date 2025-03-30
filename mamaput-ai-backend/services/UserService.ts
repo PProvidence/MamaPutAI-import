@@ -1,11 +1,14 @@
-import type { Request, Response } from 'express';
+import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.ts";
-import type { User } from '@prisma/client';
+import type { User } from "@prisma/client";
 
 export async function editUser(req: Request, res: Response) {
+  if (req.method !== "POST") {
+    res.status(405).json("Method Not Allowed");
+    return;
+  }
   try {
-
-    const id: string = req.params.id
+    const id: string = req.params.id;
     const user: Partial<User> = req.body;
     await prisma.user.update({
       where: {
@@ -15,6 +18,36 @@ export async function editUser(req: Request, res: Response) {
     });
     res.json("Updated Successfully");
   } catch (error) {
-    res.json(error);
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function getUser(req: Request, res: Response) {
+  if (req.method !== "GET") {
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
+  }
+
+  try {
+    const id: string | undefined = req.params.id;
+    if (!id) {
+      res.status(400).json({ error: "User ID is required" });
+      return;
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { id },
+    });
+
+    if (!user) {
+      res.status(404).json({ error: "No User Found" });
+      return;
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }

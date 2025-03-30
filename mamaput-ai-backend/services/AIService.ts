@@ -30,6 +30,7 @@ function getRandomCuisines() {
 }
 
 export async function getMeals(req: Request, res: Response) {
+
   const { allergies, health_conditions, dietary_conditions } = req.body;
 
   const timestamp = new Date().toISOString();
@@ -72,8 +73,6 @@ export async function getMeals(req: Request, res: Response) {
     const formattedText = text.replaceAll("`", "").replace("json", "");
     res.json(JSON.parse(formattedText));
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ error: "Error generating meals", details: error.message });
+    res.status(500).json({ error: "Error generating meals", details: error.message });
   }
 }
