@@ -4,6 +4,8 @@ import { Menu, X } from "lucide-react";
 import SideNavbar from "../MainDashboardComponents/SideNavbar";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "../../../lib/authClient"; 
+import { useNavigate } from "react-router-dom";
+import { authClient } from "../../../lib/authClient"; 
 
 const MainDashboardLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
