@@ -9,8 +9,8 @@ configDotenv({ path: "./.env" });
 const app = express();
 
 
-app.all("/api/auth/*", toNodeHandler(auth));
 app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
+app.all("/api/auth/*", toNodeHandler(auth));
 
 app.use(express.json());
 
