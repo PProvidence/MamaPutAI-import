@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LandingPageLayout from "./components/layouts/LandingPageLayout";
 import SettingsLayout from "./components/layouts/SettingsLayout";
 import MainDashboardLayout from "./components/layouts/MainDashboardLayout";
+
 //Pages
-import NutritionDetailComponent from "./components/MainDashboardComponents/NutritionDetailComponent";
 import NutritionDetailComponent from "./components/MainDashboardComponents/NutritionDetailComponent";
 import ProfileSettings from "./pages/settings/ProfileSettings";
 import AccountSettings from "./pages/settings/AccountSettings";
