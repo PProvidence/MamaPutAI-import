@@ -66,7 +66,6 @@ const SignupPage = () => {
     }));
   };
 
-  console.log(formData)
   const handleSubmit = async () => {
     setIsLoading((prev) => ({ ...prev, create: true }));
 
@@ -108,10 +107,11 @@ const SignupPage = () => {
       {
         email: formData.email,
         otp: OTP,
+        
       },
       {
         onSuccess() {
-          navigate("/dashboard");
+          navigate("http://localhost:5173/dashboard");
         },
       }
     );
@@ -120,7 +120,7 @@ const SignupPage = () => {
       setError(error.message || "An unknown error occurred");
       throw new Error(error.message);
     }
-    setIsLoading(prev => ({ ...prev, verify: false }));
+    setIsLoading((prev) => ({ ...prev, verify: false }));
   };
 
   return (
