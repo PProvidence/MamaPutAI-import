@@ -1,8 +1,11 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+// Layouts
 import LandingPageLayout from "./components/layouts/LandingPageLayout";
 import SettingsLayout from "./components/layouts/SettingsLayout";
 import MainDashboardLayout from "./components/layouts/MainDashboardLayout";
+
+//Pages
 import NutritionDetailComponent from "./components/MainDashboardComponents/NutritionDetailComponent";
 import ProfileSettings from "./pages/settings/ProfileSettings";
 import AccountSettings from "./pages/settings/AccountSettings";
@@ -17,9 +20,10 @@ import SignupPage from "./pages/Auth_pages/signup";
 import LoginPage from "./pages/Auth_pages/login";
 import Onboarding from "./pages/Auth_pages/onboarding";
 import Dashboard from "./pages/MainDashboard/Dashboard";
+import NotificationsPage from "./pages/MainDashboard/Notifications";
 import MealPlans from "./pages/MainDashboard/MealPlans";
 import NutritionTracker from "./pages/MainDashboard/NutriTracker";
-import Reminder from "./pages/MainDashboard/Reminder";
+import Reminders from "./pages/MainDashboard/Reminder";
 import History from "./pages/MainDashboard/History";
 import Feedback from "./pages/MainDashboard/Feedback";
 
@@ -111,6 +115,14 @@ function App() {
           }
         />
         <Route
+          path="/dashboard/notifications"
+          element={
+            <MainDashboardLayout>
+              <NotificationsPage />
+            </MainDashboardLayout>
+          }
+        />
+        <Route
           path="/meal-plans"
           element={
             <MainDashboardLayout>
@@ -140,7 +152,7 @@ function App() {
           path="/reminders"
           element={
             <MainDashboardLayout>
-              <Reminder />
+              <Reminders />
             </MainDashboardLayout>
           }
         />

@@ -69,8 +69,8 @@ export async function getMeals(req: Request, res: Response) {
                - Current timestamp: ${timestamp}
                - Ensure each generation of meals is unique.
                - Consider user allergies: ${user.allergies}
-               - Consider health conditions: ${user.health_conditions}
-               - Consider dietary restrictions: ${user.dietary_preferences}
+               - Consider health conditions: ${user.healthConditions}
+               - Consider dietary restrictions: ${user.dietaryPreferences}
                
                The output should follow this example format:
                [

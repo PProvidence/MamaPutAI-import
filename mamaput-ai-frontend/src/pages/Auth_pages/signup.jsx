@@ -46,6 +46,7 @@ const SignupPage = () => {
 
   // Ensure all fields are filled before enabling the button
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const passwordHasNumber = /\d/.test(formData.password);
   const passwordHasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(formData.password);
   const isPasswordValid =
@@ -57,6 +58,8 @@ const SignupPage = () => {
     isPasswordValid;
 
   const handleChange = (e) => {
+    setError("");
+
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -65,35 +68,43 @@ const SignupPage = () => {
 
   console.log(formData)
   const handleSubmit = async () => {
-    setIsLoading({ create: true });
+    setIsLoading((prev) => ({ ...prev, create: true }));
+
     try {
-      await authClient.signUp.email(
-        {
-          email: formData.email,
-          password: formData.password,
-          name: `${formData.firstName} ${formData.lastName}`,
-        },
-        {
-          onError() {
-            throw new Error("Email Exists");
-          },
-        }
-      );
-      await authClient.emailOtp.sendVerificationOtp({
+      const { error } = await authClient.signUp.email({
         email: formData.email,
-        type: "email-verification",
+        password: formData.password,
+        name: `${formData.firstName} ${formData.lastName}`,
       });
+
+      if (error) {
+        setError(error.message || "An unknown error occurred");
+        throw new Error(error.message);
+      }
+
+      const { error: verifyError } =
+        await authClient.emailOtp.sendVerificationOtp({
+          email: formData.email,
+          type: "email-verification",
+        });
+
+      if (verifyError) {
+        setError("");
+        setError(error.message);
+        throw new Error(error.message);
+      }
+
       setStep("verify");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
-      setIsLoading({ create: false });
+      setIsLoading((prev) => ({ ...prev, create: false }));
     }
   };
 
   const handleVerify = async () => {
     setIsLoading({ verify: true });
-    await authClient.emailOtp.verifyEmail(
+    const { error } = await authClient.emailOtp.verifyEmail(
       {
         email: formData.email,
         otp: OTP,
@@ -104,7 +115,12 @@ const SignupPage = () => {
         },
       }
     );
-    setIsLoading({ verify: false });
+
+    if (error) {
+      setError(error.message || "An unknown error occurred");
+      throw new Error(error.message);
+    }
+    setIsLoading(prev => ({ ...prev, verify: false }));
   };
 
   return (
@@ -282,6 +298,7 @@ const SignupPage = () => {
                 <p className="text-gray-400 font-medium text-xs mb-6">
                   Use 8 characters or more
                 </p>
+                <p className="text-red-500 text-center my-2">{error}</p>
                 <button
                   disabled={!isFormValid || isLoading.create}
                   onClick={handleSubmit}
@@ -317,12 +334,17 @@ const SignupPage = () => {
               </label>
               <input
                 value={OTP}
-                onChange={(e) => setOTP(e.target.value)}
+                onChange={(e) => {
+                  setError("");
+
+                  setOTP(e.target.value);
+                }}
                 type="text"
                 placeholder="Enter Code"
                 className="w-full p-3 mb-4 border border-gray-300 text-lg text-center tracking-widest focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 rounded-md"
                 required
               />
+              <p className="text-red-500 text-center">{error}</p>
               <button
                 disabled={isLoading.verify}
                 onClick={handleVerify}
