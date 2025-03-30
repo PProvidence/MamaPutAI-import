@@ -14,7 +14,7 @@ const LoginPage = () => {
     confirmPassword: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   // Ensure all fields are filled before enabling the button
@@ -39,7 +39,7 @@ const LoginPage = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      await authClient.signIn.email(
+      const { error } = await authClient.signIn.email(
         {
           email: formData.email,
           password: formData.password,
@@ -53,6 +53,11 @@ const LoginPage = () => {
           },
         }
       );
+
+      if (error) {
+        setError(error.message || "An unknown error occurred");
+        throw new Error(error.message);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -137,6 +142,7 @@ const LoginPage = () => {
                 <p className="text-gray-400 font-medium text-xs mb-6">
                   Use 8 characters or more
                 </p>
+                <p className="text-red-500 text-center">{error}</p>
                 <button
                   type="submit"
                   disabled={!isFormValid || isLoading}
@@ -149,10 +155,13 @@ const LoginPage = () => {
               <div className="mt-6 space-y-2">
                 <button
                   onClick={async () => {
-                    await authClient.signIn.social({
-                      provider: "google",
-                      callbackURL: "http://localhost:5173/dashboard",
-                    });
+                    await authClient.signIn.social(
+                      {
+                        provider: "google",
+                        callbackURL: "http://localhost:5173/dashboard"
+                      },
+                     
+                    );
                   }}
                   className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50"
                 >

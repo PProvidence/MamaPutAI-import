@@ -2,9 +2,9 @@ import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import { configDotenv } from "dotenv";
 import express from "express";
-import { aiRouter } from "./routers/AIRouter.ts";
-import { userRouter } from "./routers/UserRouter.ts";
-import { auth } from "./lib/auth.ts";
+import { aiRouter } from "./routers/AIRouter.js";
+import { userRouter } from "./routers/UserRouter.js";
+import { auth } from "./lib/auth.js";
 configDotenv({ path: "./.env" });
 const app = express();
 

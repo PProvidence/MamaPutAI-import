@@ -8,7 +8,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
-import { authClient } from "../../../lib/authclient";
+import { authClient } from "../../../lib/authClient";
 
 const steps = [
   {
@@ -107,6 +107,7 @@ const SignupPage = () => {
       {
         email: formData.email,
         otp: OTP,
+        
       },
       {
         onSuccess() {
@@ -119,7 +120,7 @@ const SignupPage = () => {
       setError(error.message || "An unknown error occurred");
       throw new Error(error.message);
     }
-    setIsLoading(prev => ({ ...prev, verify: false }));
+    setIsLoading((prev) => ({ ...prev, verify: false }));
   };
 
   return (
