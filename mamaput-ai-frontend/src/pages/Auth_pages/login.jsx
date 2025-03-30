@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
-import { FaGoogle, FaApple, FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
+import { FaApple, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
+import { Link, useNavigate } from "react-router-dom";
+import { authClient } from "../../../lib/authclient";
 
 const LoginPage = () => {
   const [step, setStep] = useState("options"); // 'options' | 'verify' | 'changeP'
@@ -11,6 +13,9 @@ const LoginPage = () => {
     newPassword: "",
     confirmPassword: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   // Ensure all fields are filled before enabling the button
   const [showPassword, setShowPassword] = useState(false);
@@ -31,9 +36,33 @@ const LoginPage = () => {
     }));
   };
 
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      await authClient.signIn.email(
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          onSuccess() {
+            navigate("/dashboard");
+          },
+          onError(error) {
+            console.log(error.response);
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="h-screen flex justify-center md:flex-row bg-white">
-      <div className="w-full md:w-1/2 flex justify-center items-center p-6 md:p-12 ">
+      <div className="w-full flex justify-center items-center p-6 md:p-12 ">
         <div className="w-full max-w-md bg-white p-10 shadow-2xl rounded-lg">
           {step === "options" && (
             // Step 1: Log In Options
@@ -44,7 +73,6 @@ const LoginPage = () => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  setStep("verify");
                 }}
               >
                 <label
@@ -110,24 +138,28 @@ const LoginPage = () => {
                   Use 8 characters or more
                 </p>
                 <button
-                  type="submit"
-                  disabled={!isFormValid}
-                  className={`w-full text-white py-2 rounded-lg font-semibold transition ${
-                    isFormValid
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-green-200 cursor-not-allowed"
-                  }`}
+                  disabled={!isFormValid || isLoading}
+                  onClick={handleSubmit}
+                  className="w-full text-white py-2 rounded-lg font-semibold transition bg-green-600 hover:bg-green-700 disabled:bg-green-200 disabled:cursor-not-allowed"
                 >
                   Continue
                 </button>
               </form>
-              <div className="mt-6 space-y-3">
-                <button className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold hover:bg-green-600 transition">
-                  <FaGoogle />
+              <div className="mt-6 space-y-2">
+                <button
+                  onClick={async () => {
+                    await authClient.signIn.social({
+                      provider: "google",
+                      callbackURL: "http://localhost:5173/dashboard",
+                    });
+                  }}
+                  className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50"
+                >
+                  <FcGoogle />
                   Continue with Google
                 </button>
 
-                <button className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold hover:bg-green-600 transition">
+                <button className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50">
                   <FaApple />
                   Continue with Apple
                 </button>
@@ -142,45 +174,6 @@ const LoginPage = () => {
             </div>
           )}
 
-          {step === "verify" && (
-            // Step 2: Verification Step
-            <div>
-              <h2 className="text-2xl flex justify-center pb-4 font-bold mb-4">
-                Authentication Request
-              </h2>
-              <p className="text-sm text-gray-600 mb-6">
-                To verify email, we’ve sent a one time password (OTP) to
-                j******@gmail.com
-              </p>
-              <label
-                htmlFor="number"
-                className="font-medium text-xs text-gray-900"
-              >
-                OTP Code
-              </label>
-              <input
-                type="text"
-                placeholder="Enter Code"
-                className="w-full p-3 mb-4 border border-gray-300 text-lg text-center tracking-widest focus:border-green-600 focus:outline-none focus:ring-1 focus:ring-green-600 rounded-md"
-                required
-              />
-              <button className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition">
-                Authenticate
-              </button>
-              <p className="mt-4 text-sm text-center">
-                Didn't get code?{" "}
-                <Link to="/login" className="text-green-600 font-semibold">
-                  Resend
-                </Link>
-              </p>
-              <button
-                onClick={() => setStep("options")}
-                className="w-full mt-4 text-sm text-gray-500 hover:underline"
-              >
-                ← Back to log in
-              </button>
-            </div>
-          )}
           {step === "changeP" && (
             <div>
               <h2 className="text-2xl flex justify-center pb-4 font-bold mb-4">
