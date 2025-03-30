@@ -66,11 +66,18 @@ const SignupPage = () => {
   const handleSubmit = async () => {
     setIsLoading({ create: true });
     try {
-      await authClient.signUp.email({
-        email: formData.email,
-        password: formData.password,
-        name: `${formData.firstName} ${formData.lastName}`,
-      });
+      await authClient.signUp.email(
+        {
+          email: formData.email,
+          password: formData.password,
+          name: `${formData.firstName} ${formData.lastName}`,
+        },
+        {
+          onError() {
+            throw new Error("Email Exists");
+          },
+        }
+      );
       await authClient.emailOtp.sendVerificationOtp({
         email: formData.email,
         type: "email-verification",
