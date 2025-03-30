@@ -6,18 +6,17 @@ import Features from "../components/featureBlock";
 // import heroMenuImg4 from "../assets/img/center.svg";
 import heroImage from "../assets/img/heroImage.svg";
 import { Link } from "react-router-dom";
-import { authClient } from "../../lib/authclient";
+import { authClient } from "../../lib/authClient";
 
 const Home = () => {
-
   const session = new Promise((resolve, reject) => {
-   authClient.getSession().then(resolve).catch(reject)
-
-  })
+    authClient.getSession().then(resolve).catch(reject);
+  });
 
   session
-  .then(s => console.log("Session:", s))
-  .catch(err => console.error("Error fetching session:", err));
+    .then((s) => console.log("Session:", s))
+    .catch((err) => console.error("Error fetching session:", err));
+
   const featureList = [
     {
       icon: "NotePadText",
@@ -120,10 +119,7 @@ const Home = () => {
             roots.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              className="btn--text-white bg-black py-2 px-4"
-              href="/signup"
-            >
+            <a className="btn--text-white bg-black py-2 px-4" href="/signup">
               Get Started
             </a>
             <a
@@ -181,12 +177,7 @@ const Home = () => {
         </h3>
         <ul className="flex md:flex-wrap md:flex-row flex-col justify-evenly w-10/12 gap-6 m-auto text-justify list-disc marker:text-[#22C55E]">
           {whyChooseUsList.map((item, index) => (
-            <li
-              key={index}
-              className={`basis-2/5 px-5 ${
-                index === 0 || index === 2 ? "md:border-r" : ""
-              }`}
-            >
+            <li key={index} className="basis-2/5 px-5">
               <h4 className="font-bold text-lg">{item.headingText}</h4>
               <p className="text-gray-700">{item.content}</p>
             </li>

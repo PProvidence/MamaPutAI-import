@@ -2,11 +2,14 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import SettingsNavBar from "../SettingsComponent/SettingsNavBar";
+import { useNavigate } from "react-router-dom";
+import { authClient } from "../../../lib/authClient";
 
 const SettingsLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+  const navigate = useNavigate();
+
   // Close mobile menu when screen size changes to desktop
   useEffect(() => {
     const handleResize = () => {
@@ -14,41 +17,52 @@ const SettingsLayout = ({ children }) => {
         setIsMobileMenuOpen(false);
       }
     };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [isMobileMenuOpen]);
+
+  // Check if user is authenticated and redirect if not
+  useEffect(() => {
+    async function fetchSession() {
+      const session = await authClient.getSession();
+      if (!session.data) {
+        navigate("/");
+      }
+    }
+    fetchSession();
+  }, [navigate]);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
       {/* Desktop Sidebar */}
-      <div 
+      <div
         className={`hidden md:block transition-all duration-300 ease-in-out ${
           isSidebarCollapsed ? "w-16" : "w-64"
         }`}
       >
-        <SettingsNavBar 
-          isCollapsed={isSidebarCollapsed} 
-          setIsCollapsed={setIsSidebarCollapsed} 
+        <SettingsNavBar
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
         />
       </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="md:hidden fixed inset-0 bg-[#16A34A] opacity-75 z-20"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Mobile Sidebar */}
-      <div 
+      <div
         className={`md:hidden fixed inset-y-0 left-0 z-30 transition-all duration-300 ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } w-3/4 max-w-xs`}
       >
         <div className="h-full relative">
-          <button 
+          <button
             className="absolute right-4 top-4 z-10 p-1 rounded-full bg-gray-100"
             onClick={() => setIsMobileMenuOpen(false)}
           >
@@ -73,9 +87,7 @@ const SettingsLayout = ({ children }) => {
         </div>
 
         {/* Content */}
-        <div className="p-4 md:p-6 lg:w-3/5">
-          {children}
-        </div>
+        <div className="p-4 md:p-6 lg:w-3/5">{children}</div>
       </div>
     </div>
   );

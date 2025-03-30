@@ -8,7 +8,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
-import { authClient } from "../../../lib/authclient";
+import { authClient } from "../../../lib/authClient";
 
 const steps = [
   {

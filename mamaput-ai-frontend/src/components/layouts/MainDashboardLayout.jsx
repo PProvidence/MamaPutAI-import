@@ -2,16 +2,17 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import SideNavbar from "../MainDashboardComponents/SideNavbar";
-import { authClient } from "../../../lib/authclient";
 import { useNavigate } from "react-router-dom";
+import { authClient } from "../../../lib/authClient"; 
 
 const MainDashboardLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
-  // Close mobile menu when screen size changes to desktop
+
+  // ✅ Close mobile menu when screen size changes to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isMobileMenuOpen) {
@@ -23,19 +24,28 @@ const MainDashboardLayout = ({ children }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, [isMobileMenuOpen]);
 
+  // ✅ Improved authentication check
   useEffect(() => {
     async function fetchSession() {
-      const session = await authClient.getSession();
-      console.log(session)
-      if (!session.data) {
+      try {
+        const session = await authClient.getSession();
+        console.log("Session Response:", session);
+
+        // Check if session and session.data exist
+        if (!session || !session.data) {
+          navigate("/"); // Redirect to login
+        } else {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching session:", error);
         navigate("/");
-      } else {
-        setIsLoading(false)
       }
     }
     fetchSession();
   }, [navigate]);
 
+  // ✅ Display loading state
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -43,7 +53,7 @@ const MainDashboardLayout = ({ children }) => {
       </div>
     );
   }
-  
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
       {/* Desktop Sidebar */}
