@@ -8,13 +8,14 @@ import { auth } from "./lib/auth.ts";
 configDotenv({ path: "./.env" });
 const app = express();
 
- 
+
+app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
 app.all("/api/auth/*", toNodeHandler(auth));
 
 app.use(express.json());
+
 app.use("/ai", aiRouter)
 app.use("/user", userRouter)
-app.use(cors({ origin: ["http://localhost:5173"] }));
 
 const port = process.env.PORT || 3005;
 
