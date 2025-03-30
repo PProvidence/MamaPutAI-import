@@ -2,11 +2,11 @@
   "name": "mamaput-ai-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "postinstall": "bunx prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
