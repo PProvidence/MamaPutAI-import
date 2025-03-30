@@ -4,8 +4,6 @@ import { Menu, X } from "lucide-react";
 import SideNavbar from "../MainDashboardComponents/SideNavbar";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "../../../lib/authClient"; 
-import { useNavigate } from "react-router-dom";
-import { authClient } from "../../../lib/authClient"; 
 
 const MainDashboardLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -14,7 +12,7 @@ const MainDashboardLayout = ({ children }) => {
 
   const navigate = useNavigate();
 
-  // ✅ Close mobile menu when screen size changes to desktop
+  // Close mobile menu when screen size changes to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isMobileMenuOpen) {
