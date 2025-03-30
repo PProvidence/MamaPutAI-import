@@ -5,9 +5,9 @@ import { PrismaClient } from "@prisma/client";
 import { configDotenv } from "dotenv";
 import { Resend } from "resend";
 
+configDotenv({ path: "./.env" });
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-configDotenv({ path: "./.env" });
 const prisma = new PrismaClient();
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -24,7 +24,7 @@ export const auth = betterAuth({
     },
   },
   baseURL: "http://localhost:3005",
-  trustedOrigins: ["http://localhost:5173"],
+  trustedOrigins: ["http://localhost:5173", "https://api.mamaplaceai.tech"],
 
   plugins: [
     emailOTP({
