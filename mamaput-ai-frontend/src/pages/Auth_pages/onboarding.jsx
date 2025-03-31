@@ -5,7 +5,10 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import allergensData from "../../data/allergens.json";
 import { useDispatch } from "react-redux";
-import { updateUserDetails, getUserDetails } from "../../../redux/userSettingsSlice";
+import {
+  updateUserDetails,
+  getUserDetails,
+} from "../../../redux/userSettingsSlice";
 
 const side = [
   {
@@ -572,8 +575,13 @@ const Onboarding = () => {
               <Select
                 options={allergyOptions}
                 isMulti
-                value={selectedAllergies}
-                onChange={setSelectedAllergies}
+                value={selectedAllergies.map((a) => ({ label: a, value: a }))} // Adjusted for the multi-select options to work
+                onChange={(selectedOptions) => {
+                  // Map the selected options to an array of strings (values)
+                  setSelectedAllergies(
+                    selectedOptions.map((option) => option.value)
+                  );
+                }}
                 className="border rounded-lg"
                 classNamePrefix="custom-select"
                 placeholder="Select allergies..."
@@ -582,19 +590,17 @@ const Onboarding = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {selectedAllergies.map((allergy) => (
                     <button
-                      key={allergy.value}
+                      key={allergy} // Now allergy is just a string, not an object
                       type="button"
                       className="bg-red-100 text-red-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
                       onClick={() =>
                         setSelectedAllergies(
-                          selectedAllergies.filter(
-                            (a) => a.value !== allergy.value
-                          )
+                          selectedAllergies.filter((a) => a !== allergy)
                         )
                       }
                     >
-                      <span>{allergy.label}</span>{" "}
-                      {/* Access the label property */}
+                      <span>{allergy}</span>{" "}
+                      {/* Directly display the allergy value */}
                       <XCircle className="h-4 w-4 fill-current" />
                     </button>
                   ))}
@@ -607,8 +613,13 @@ const Onboarding = () => {
               <label className="font-semibold mb-2">Health Condition</label>
               <Select
                 options={healthConditions.map((h) => ({ label: h, value: h }))}
-                value={selectedHealthCondition}
-                onChange={setSelectedHealthCondition}
+                value={selectedHealthCondition.map((val) => ({
+                  label: val,
+                  value: val,
+                }))}
+                onChange={(selected) =>
+                  setSelectedHealthCondition(selected.map((s) => s.value))
+                }
                 isMulti
                 className="border rounded-lg"
                 classNamePrefix="custom-select"
@@ -618,19 +629,16 @@ const Onboarding = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {selectedHealthCondition.map((condition) => (
                     <button
-                      key={condition.value} // Assuming you're using react-select for this as well
+                      key={condition}
                       type="button"
                       className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
                       onClick={() =>
                         setSelectedHealthCondition(
-                          selectedHealthCondition.filter(
-                            (c) => c.value !== condition.value
-                          )
+                          selectedHealthCondition.filter((c) => c !== condition)
                         )
                       }
                     >
-                      <span>{condition.label}</span>{" "}
-                      {/* Access the label property */}
+                      <span>{condition}</span> {/* Display only the value */}
                       <XCircle className="h-4 w-4 fill-current" />
                     </button>
                   ))}
@@ -646,8 +654,16 @@ const Onboarding = () => {
                   label: d,
                   value: d,
                 }))}
-                value={selectedDietaryPreference}
-                onChange={setSelectedDietaryPreference}
+                value={selectedDietaryPreference.map((d) => ({
+                  label: d,
+                  value: d,
+                }))} // Convert string array to label-value format for the Select
+                onChange={(selectedOptions) => {
+                  // Map the selected options to an array of strings (values)
+                  setSelectedDietaryPreference(
+                    selectedOptions.map((option) => option.value)
+                  );
+                }}
                 isMulti
                 className="border rounded-lg"
                 classNamePrefix="custom-select"
@@ -657,18 +673,18 @@ const Onboarding = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {selectedDietaryPreference.map((preference) => (
                     <button
-                      key={preference.value} //Assuming you're using react-select for this as well
+                      key={preference} // Directly use preference as it's now a string
                       type="button"
                       className="bg-green-100 text-green-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
                       onClick={() =>
                         setSelectedDietaryPreference(
                           selectedDietaryPreference.filter(
-                            (p) => p.value !== preference.value
+                            (p) => p !== preference
                           )
                         )
                       }
                     >
-                      <span>{preference.label}</span>
+                      <span>{preference}</span> {/* Show preference directly */}
                       <XCircle className="h-4 w-4 fill-current" />
                     </button>
                   ))}
