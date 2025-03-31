@@ -12,8 +12,7 @@ const ProfileSettings = () => {
 
   // Local State
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     birthDay: "",
     gender: "",
     height: "",
@@ -26,10 +25,6 @@ const ProfileSettings = () => {
 
   const [email, setEmail] = useState("");
   const [preview, setPreview] = useState(defaultProfilePic);
-
-  useEffect(() => {
-    dispatch(getUserDetails());
-  }, [dispatch]);
 
   useEffect(() => {
     if (profileState) {
@@ -112,26 +107,17 @@ const ProfileSettings = () => {
         </div>
 
         {/* PERSONAL DETAILS */}
-        <div className="flex flex-col md:flex-row md:gap-10">
+        
           <label className="flex flex-col gap-2">
-            <span>First Name</span>
+            <span>Name</span>
             <input
               type="text"
-              value={formData.firstName}
-              onChange={(e) => handleChange("firstName", e.target.value)}
+              value={formData.name}
+              onChange={(e) => handleChange("name", e.target.value)}
               className="form-input-field"
             />
           </label>
-          <label className="flex flex-col gap-2">
-            <span>Last Name</span>
-            <input
-              type="text"
-              value={formData.lastName}
-              onChange={(e) => handleChange("lastName", e.target.value)}
-              className="form-input-field"
-            />
-          </label>
-        </div>
+  
 
         <div className="flex flex-col md:flex-row md:gap-10">
           <label className="flex flex-col gap-2">

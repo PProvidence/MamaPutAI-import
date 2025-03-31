@@ -25,7 +25,7 @@ export const getUserDetails = createAsyncThunk(
 export const updateUserDetails = createAsyncThunk(
   "userSettings/updateUserDetails",
   async (updatedDetails, { rejectWithValue }) => {
-    const url = "http://localhost:3005/edit/user/me";
+    const url = "http://localhost:3005/user/edit/me";
 
     try {
       const response = await fetch(url, {
@@ -55,8 +55,7 @@ export const updateUserDetails = createAsyncThunk(
 const initialState = {
   email: "",
   profileState: {
-    firstName: "",
-    lastName: "",
+    name:"",
     birthDay: "",
     height: "",
     weight: "",
