@@ -30,6 +30,7 @@ model User {
   updatedAt          DateTime
   sessions           Session[]
   accounts           Account[]
+  remainders         Remainder[]
 
   @@map("user")
 }
@@ -95,4 +96,12 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Remainder {
+  id        String   @id
+  title     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
