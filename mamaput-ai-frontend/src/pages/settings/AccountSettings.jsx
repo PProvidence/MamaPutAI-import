@@ -1,21 +1,72 @@
 import { useSelector, useDispatch } from "react-redux";
-import {
-  updateEmail,
-  updateAccountSetting,
-} from "../../../redux/userSettingsSlice";
+import { updateUserDetails } from "../../../redux/userSettingsSlice";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 
 const AccountSettings = () => {
   const dispatch = useDispatch();
-  const accountSettings = useSelector(
-    (state) => state.userSettings.accountSettings
-  );
-  const email = useSelector((state) => state.userSettings.email);
+  const { accountSettings, email } = useSelector((state) => state.userSettings);
 
-  const [newEmail, setNewEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [localSettings, setLocalSettings] = useState({
+    email,
+    password: "",
+    disableAccount: accountSettings.disableAccount,
+  });
+
   const [showPassword, setShowPassword] = useState(false);
+
+  // Handle Input Change
+  const handleChange = (field, value) => {
+    setLocalSettings((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // Update Email
+  const handleEmailChange = () => {
+    if (!localSettings.email.includes("@")) {
+      alert("Please enter a valid email");
+      return;
+    }
+
+    dispatch(updateUserDetails({ email: localSettings.email }));
+  };
+
+  // Update Password
+  const handlePasswordChange = () => {
+    if (localSettings.password.length < 8) {
+      alert("Password must be at least 8 characters long");
+      return;
+    }
+
+    if (localSettings.password === accountSettings.password) {
+      alert("Please enter a new password");
+      return;
+    }
+
+    dispatch(updateUserDetails({ password: localSettings.password }));
+    setLocalSettings((prev) => ({
+      ...prev,
+      password: "",
+    }));
+  };
+
+  // Disable Account
+  const handleDisableAccount = () => {
+    if (window.confirm("Are you sure you want to disable your account?")) {
+      dispatch(updateUserDetails({ disableAccount: true }));
+    }
+  };
+
+  // Submit Changes
+  const handleSubmit = () => {
+    dispatch(updateUserDetails({
+      email: localSettings.email,
+      password: localSettings.password,
+      disableAccount: localSettings.disableAccount,
+    }));
+  };
 
   return (
     <div className="font-instrument-sans">
@@ -24,114 +75,78 @@ const AccountSettings = () => {
         onSubmit={(e) => e.preventDefault()}
         className="py-10 px-5 flex flex-col gap-10"
       >
-        <h3 className="settings--form-heading">
-          Account - Verified Information
-        </h3>
+        <h3 className="settings--form-heading">Account - Verified Information</h3>
 
-        {/* Email Section */}
+        {/* EMAIL SETTINGS */}
         <div className="emailDiv flex flex-col gap-4">
-          <label className="text-base font-light font-instrument-sans">
-            Email
-          </label>
+          <label className="text-base font-light">Email</label>
           <input
             type="email"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
+            value={localSettings.email}
+            onChange={(e) => handleChange("email", e.target.value)}
             placeholder={email}
             className="form-input-field"
           />
           <button
             type="button"
-            onClick={() => {
-              if (!newEmail.includes("@")) {
-                alert("Please enter a valid email!");
-                return;
-              }
-              dispatch(updateEmail(newEmail));
-              setNewEmail(""); // Clear input after update
-            }}
-            className={`form-button ${
-              !newEmail || !newEmail.includes("@") ? "cursor-not-allowed" : ""
-            }`}
-            disabled={!newEmail || !newEmail.includes("@")}
+            onClick={handleEmailChange}
+            className={`form-button ${!localSettings.email.includes("@") ? "cursor-not-allowed" : ""}`}
+            disabled={!localSettings.email.includes("@")}
           >
             Change Email
           </button>
         </div>
 
-        {/* Password Section */}
-        <div className="passwordDiv  flex flex-col gap-4">
-          <label className="text-base font-light font-instrument-sans">
-            Change Password
-          </label>
+        {/* PASSWORD SETTINGS */}
+        <div className="passwordDiv flex flex-col gap-4">
+          <label className="text-base font-light">Change Password</label>
           <div className="form-input-field flex gap-2">
             <input
               type={showPassword ? "text" : "password"}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              value={localSettings.password}
+              onChange={(e) => handleChange("password", e.target.value)}
               placeholder="********"
               className="flex-1 outline-none"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-[#373737] "
+              className="text-[#373737]"
             >
               {showPassword ? <Eye /> : <EyeClosed />}
             </button>
           </div>
-          <p>Use 8 characters or more</p>
           <button
             type="button"
-            onClick={() => {
-              if (newPassword.length < 8) {
-                alert("Password must be at least 8 characters long!");
-                return;
-              }
-              if (newPassword === accountSettings.password) {
-                alert("Please enter a new password!");
-                return;
-              }
-
-              dispatch(
-                updateAccountSetting({ field: "password", value: newPassword })
-              );
-              setNewPassword(""); // Clear input after update
-            }}
-            className={`form-button ${
-              newPassword.length < 8 || newPassword === accountSettings.password
-                ? "cursor-not-allowed"
-                : ""
-            }`}
-            disabled={
-              newPassword.length < 8 || newPassword === accountSettings.password
-            }
+            onClick={handlePasswordChange}
+            className={`form-button ${localSettings.password.length < 8 ? "cursor-not-allowed" : ""}`}
+            disabled={localSettings.password.length < 8}
           >
-            Send Request
+            Change Password
           </button>
         </div>
 
-        {/* Disable Account Section */}
+        {/* DISABLE ACCOUNT */}
         <div className="disableAccountDiv flex flex-col gap-4">
           <label className="text-lg">Disable Account</label>
           <p>You can temporarily disable or permanently delete your account.</p>
           <button
             type="button"
-            onClick={() => {
-              const confirmDisable = window.confirm(
-                "Are you sure you want to disable your account?"
-              );
-              if (confirmDisable) {
-                dispatch(
-                  updateAccountSetting({ field: "disableAccount", value: true })
-                );
-              }
-            }}
+            onClick={handleDisableAccount}
             className="form-button-disabled"
           >
             Disable Account
           </button>
         </div>
+
+        {/* SAVE ALL CHANGES */}
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="form-button"
+        >
+          Save Changes
+        </button>
       </form>
     </div>
   );

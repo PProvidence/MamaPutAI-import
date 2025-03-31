@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setNotificationSettings,
-  toggleCategoryEnabled,
-  toggleNotificationSetting,
-} from "../../../redux/userSettingsSlice";
+import { updateUserDetails } from "../../../redux/userSettingsSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faToggleOn, faToggleOff } from "@fortawesome/free-solid-svg-icons";
 
@@ -12,14 +8,14 @@ const NotificationSettings = () => {
   const dispatch = useDispatch();
   const reduxSettings = useSelector((state) => state.userSettings.notificationSettings);
 
-  // ✅ Local state for temporary changes
+  // Local state for temporary changes
   const [localSettings, setLocalSettings] = useState(reduxSettings);
 
   const categories = Object.keys(localSettings).filter(
     (key) => typeof localSettings[key] === "object"
   );
 
-  // ✅ Toggle category (but only update local state)
+  // Toggle category (local state only)
   const handleCategoryToggle = (category) => {
     setLocalSettings((prev) => {
       const isEnabled = !prev[`${category}Enabled`];
@@ -37,7 +33,7 @@ const NotificationSettings = () => {
     });
   };
 
-  // ✅ Toggle individual setting (local state only)
+  // Toggle individual setting (local state only)
   const handleSettingToggle = (category, setting) => {
     setLocalSettings((prev) => ({
       ...prev,
@@ -48,9 +44,14 @@ const NotificationSettings = () => {
     }));
   };
 
-  // ✅ Update Redux store when "Save" is clicked
+  // Save to backend and update Redux state
   const handleSubmit = () => {
-    dispatch(setNotificationSettings(localSettings));
+    // Update backend and Redux state with new notification settings
+    dispatch(
+      updateUserDetails({
+        notificationSettings: localSettings, // Backend expects the complete settings object
+      })
+    );
   };
 
   return (
@@ -91,9 +92,14 @@ const NotificationSettings = () => {
                     name={setting}
                     id={setting}
                     className="accent-settingsGreen"
-                    disabled={!isCategoryEnabled} // Disable checkbox when category is off
+                    disabled={!isCategoryEnabled}
                   />
-                  <label className={`text-base ${isCategoryEnabled ? "text-gray-500" : "text-trueGrey"} capitalize`}htmlFor={setting}>
+                  <label
+                    className={`text-base ${
+                      isCategoryEnabled ? "text-gray-500" : "text-trueGrey"
+                    } capitalize`}
+                    htmlFor={setting}
+                  >
                     {setting.replace(/([A-Z])/g, " $1").trim()}
                   </label>
                 </div>
