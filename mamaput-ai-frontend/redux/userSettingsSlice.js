@@ -7,7 +7,9 @@ export const getUserDetails = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     const url = "http://localhost:3005/user/me";
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        credentials: "include"
+      });
       if (!response.ok) {
         throw new Error("Network response was not ok: " + response.statusText);
       }
