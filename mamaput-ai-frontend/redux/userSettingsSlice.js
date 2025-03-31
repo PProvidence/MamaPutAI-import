@@ -29,7 +29,9 @@ export const updateUserDetails = createAsyncThunk(
 
     try {
       const response = await fetch(url, {
-        method: "PUT",
+        method: "POST",
+        credentials: "include",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
