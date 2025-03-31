@@ -27,6 +27,20 @@ export const updateUserDetails = createAsyncThunk(
   async (updatedDetails, { rejectWithValue }) => {
     const url = "http://localhost:3005/user/edit/me";
 
+    // Transform frontend state to backend format
+    const backendPayload = {
+      name: updatedDetails.name,
+      DOB: updatedDetails.DOB,
+      gender: updatedDetails.gender,
+      height: updatedDetails.height,
+      weight: updatedDetails.weight,
+      allergies: updatedDetails.allergies,
+      health_conditions: updatedDetails.healthConditions,
+      dietary_preferences: updatedDetails.dietaryPreference,
+      image: updatedDetails.image,
+      email: updatedDetails.email,
+    };
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -35,7 +49,7 @@ export const updateUserDetails = createAsyncThunk(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedDetails),
+        body: JSON.stringify(backendPayload),
       });
 
       if (!response.ok) {
@@ -52,18 +66,19 @@ export const updateUserDetails = createAsyncThunk(
   }
 );
 
+
 const initialState = {
   email: "",
   profileState: {
     name:"",
-    birthDay: "",
+    DOB: "",
     height: "",
     weight: "",
     gender: "",
     nationality: "",
     allergies: [],
     healthConditions: [],
-    dietaryPreference: "",
+    dietaryPreference: [],
     profilePicture: defaultProfilePic,
   },
 
@@ -93,22 +108,36 @@ const initialState = {
 // Update User State
 const updateUserState = (state, payload) => {
   state.email = payload.email;
+
   state.profileState = {
     ...state.profileState,
-    ...payload.profileState,
+    name: payload.name,
+    DOB: payload.DOB,
+    height: payload.height,
+    weight: payload.weight,
+    gender: payload.gender,
+    nationality: payload.nationality,
+    allergies: payload.allergies,
+    healthConditions: payload.health_conditions,
+    dietaryPreference: payload.dietary_preferences,
+    profilePicture: payload.image,
   };
+
   state.notificationSettings = {
     ...state.notificationSettings,
-    ...payload.notificationSettings,
   };
+
   state.accountSettings = {
     ...state.accountSettings,
-    ...payload.accountSettings,
+    password: payload.password,
   };
+
   state.preferences = {
     ...state.preferences,
-    ...payload.preferences,
   };
+
+  state.isLoading = false;
+  state.error = null;
 };
 
 const userSettingsSlice = createSlice({

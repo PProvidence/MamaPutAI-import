@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InputSection from "../../components/SettingsComponent/InputSection";
-import { updateUserDetails, getUserDetails } from "../../../redux/userSettingsSlice";
+import {
+  updateUserDetails,
+  getUserDetails,
+} from "../../../redux/userSettingsSlice";
 import { Pencil } from "lucide-react";
 import defaultProfilePic from "../../assets/img/default-profile.jpg";
 
@@ -13,13 +16,13 @@ const ProfileSettings = () => {
   // Local State
   const [formData, setFormData] = useState({
     name: "",
-    birthDay: "",
+    DOB: "",
     gender: "",
     height: "",
     weight: "",
     allergies: [],
     healthConditions: [],
-    dietaryPreference: "",
+    dietaryPreference: [],
     profilePicture: defaultProfilePic,
   });
 
@@ -28,11 +31,14 @@ const ProfileSettings = () => {
 
   useEffect(() => {
     if (profileState) {
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         ...profileState,
-        profilePicture: profileState.profilePicture || defaultProfilePic,
-      });
+        allergies: profileState.allergies || [],
+        healthConditions: profileState.healthConditions || [],
+        dietaryPreference: profileState.dietaryPreference || [],
+        profilePicture: profileState.profilePicture ,
+      }));
       setEmail(userEmail);
       setPreview(profileState.profilePicture || defaultProfilePic);
     }
@@ -57,21 +63,31 @@ const ProfileSettings = () => {
 
   // Save Profile Data
   const handleSave = async () => {
+    // Transform frontend data to backend format
     const updatedDetails = {
-      ...formData,
       email,
+      name: formData.name,
+ 
+      gender: formData.gender,
+      height: formData.height,
+      weight: formData.weight,
+      allergies: formData.allergies,
+      health_conditions: formData.healthConditions,
+      dietary_preferences: formData.dietaryPreference,
+      image: formData.profilePicture,
     };
 
     try {
       if (formData.profilePicture instanceof File) {
         const formDataUpload = new FormData();
         formDataUpload.append("profilePicture", formData.profilePicture);
-
-        // Example Upload (assuming uploadProfilePicture function exists)
+      
+        // Upload the picture and get the URL
         // const url = await uploadProfilePicture(formDataUpload);
         // updatedDetails.profilePicture = url;
+      } else {
+        updatedDetails.profilePicture = formData.profilePicture;
       }
-
       await dispatch(updateUserDetails(updatedDetails)).unwrap();
       alert("Profile details saved successfully!");
     } catch (error) {
@@ -92,7 +108,10 @@ const ProfileSettings = () => {
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
             />
-            <label htmlFor="profilePic" className="absolute bottom-2 right-2 bg-settingsGreen p-2 rounded-full cursor-pointer">
+            <label
+              htmlFor="profilePic"
+              className="absolute bottom-2 right-2 bg-settingsGreen p-2 rounded-full cursor-pointer"
+            >
               <Pencil size={20} className="text-white" />
               <input
                 type="file"
@@ -103,21 +122,22 @@ const ProfileSettings = () => {
               />
             </label>
           </div>
-          <p className="text-base text-gray-500">Click the icon to upload a new picture</p>
+          <p className="text-base text-gray-500">
+            Click the icon to upload a new picture
+          </p>
         </div>
 
         {/* PERSONAL DETAILS */}
-        
-          <label className="flex flex-col gap-2">
-            <span>Name</span>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-              className="form-input-field"
-            />
-          </label>
-  
+
+        <label className="flex flex-col gap-2">
+          <span>Name</span>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => handleChange("name", e.target.value)}
+            className="form-input-field"
+          />
+        </label>
 
         <div className="flex flex-col md:flex-row md:gap-10">
           <label className="flex flex-col gap-2">
@@ -133,8 +153,8 @@ const ProfileSettings = () => {
             <span>Birthday</span>
             <input
               type="date"
-              value={formData.birthDay}
-              onChange={(e) => handleChange("birthDay", e.target.value)}
+              value={formData.DOB}
+              onChange={(e) => handleChange("DOB", e.target.value)}
               className="form-input-field"
             />
           </label>
@@ -155,18 +175,35 @@ const ProfileSettings = () => {
         {/* DIETARY PREFERENCE */}
         <div className="section">
           <h2>Dietary Preference</h2>
-          <select
-            className="form-input-field"
-            value={formData.dietaryPreference}
-            onChange={(e) => handleChange("dietaryPreference", e.target.value)}
-          >
-            <option value="">Select dietary preference</option>
-            <option value="Vegetarian">Vegetarian</option>
-            <option value="Vegan">Vegan</option>
-            <option value="Pescatarian">Pescatarian</option>
-            <option value="Halal">Halal</option>
-            <option value="Kosher">Kosher</option>
-          </select>
+          <div className="flex flex-col gap-2">
+            {["Vegetarian", "Vegan", "Pescatarian", "Halal", "Kosher"].map(
+              (option) => (
+                <label key={option} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    value={option}
+                    checked={formData.dietaryPreference.includes(option)}
+                    onChange={(e) => {
+                      const { value, checked } = e.target;
+                      let updatedPreferences = [...formData.dietaryPreference];
+
+                      if (checked) {
+                        updatedPreferences.push(value);
+                      } else {
+                        updatedPreferences = updatedPreferences.filter(
+                          (item) => item !== value
+                        );
+                      }
+
+                      handleChange("dietaryPreference", updatedPreferences);
+                    }}
+                    className="accent-settingsGreen"
+                  />
+                  {option}
+                </label>
+              )
+            )}
+          </div>
         </div>
 
         <button type="button" className="form-button" onClick={handleSave}>
