@@ -5,7 +5,7 @@ import defaultProfilePic from "../src/assets/img/default-profile.jpg";
 export const getUserDetails = createAsyncThunk(
   "userSettings/getUserDetails",
   async (_, { rejectWithValue }) => {
-    const url = "http://localhost:3005/me";
+    const url = "http://localhost:3005/user/me";
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -23,7 +23,7 @@ export const getUserDetails = createAsyncThunk(
 export const updateUserDetails = createAsyncThunk(
   "userSettings/updateUserDetails",
   async (updatedDetails, { rejectWithValue }) => {
-    const url = "http://localhost:3005/edit/me";
+    const url = "http://localhost:3005/edit/user/me";
 
     try {
       const response = await fetch(url, {

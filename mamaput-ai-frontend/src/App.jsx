@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { getUserDetails } from "../redux/userSettingsSlice";
 
 // Layouts
 import LandingPageLayout from "./components/layouts/LandingPageLayout";
@@ -28,6 +31,10 @@ import History from "./pages/MainDashboard/History";
 import Feedback from "./pages/MainDashboard/Feedback";
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, [dispatch]);
   return (
     <Router>
       <Routes>
