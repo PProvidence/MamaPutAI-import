@@ -1,0 +1,330 @@
+[
+  {
+    "Allergen": "Milk",
+    "Products": 318362
+  },
+  {
+    "Allergen": "Gluten",
+    "Products": 266129
+  },
+  {
+    "Allergen": "Soybeans",
+    "Products": 189021
+  },
+  {
+    "Allergen": "Eggs",
+    "Products": 106464
+  },
+  {
+    "Allergen": "Nuts",
+    "Products": 78952
+  },
+  {
+    "Allergen": "Mustard",
+    "Products": 35199
+  },
+  {
+    "Allergen": "Fish",
+    "Products": 31521
+  },
+  {
+    "Allergen": "Peanuts",
+    "Products": 30843
+  },
+  {
+    "Allergen": "Celery",
+    "Products": 29679
+  },
+  {
+    "Allergen": "Sesame seeds",
+    "Products": 26563
+  },
+  {
+    "Allergen": "Sulphur dioxide and sulphites",
+    "Products": 20481
+  },
+  {
+    "Allergen": "Pork",
+    "Products": 10805
+  },
+  {
+    "Allergen": "Gelatin",
+    "Products": 9662
+  },
+  {
+    "Allergen": "Crustaceans",
+    "Products": 9522
+  },
+  {
+    "Allergen": "Beef",
+    "Products": 8756
+  },
+  {
+    "Allergen": "Apple",
+    "Products": 7291
+  },
+  {
+    "Allergen": "Molluscs",
+    "Products": 5948
+  },
+  {
+    "Allergen": "Orange",
+    "Products": 5314
+  },
+  {
+    "Allergen": "Chicken",
+    "Products": 3323
+  },
+  {
+    "Allergen": "None",
+    "Products": 2840
+  },
+  {
+    "Allergen": "Lupin",
+    "Products": 2527
+  },
+  {
+    "Allergen": "Banana",
+    "Products": 1989
+  },
+  {
+    "Allergen": "Oats",
+    "Products": 2029
+  },
+  {
+    "Allergen": "Kiwi",
+    "Products": 1111
+  },
+  {
+    "Allergen": "Peach",
+    "Products": 671
+  },
+  {
+    "Allergen": "Absence",
+    "Products": 478
+  },
+  {
+    "Allergen": "Coconut",
+    "Products": 321
+  },
+  {
+    "Allergen": "Limonene",
+    "Products": 133
+  },
+  {
+    "Allergen": "Linalool",
+    "Products": 123
+  },
+  {
+    "Allergen": "Tartrazine",
+    "Products": 94
+  },
+  {
+    "Allergen": "Cow's milk proteins",
+    "Products": 89
+  },
+  {
+    "Allergen": "Sodium metabisulfite",
+    "Products": 85
+  },
+  {
+    "Allergen": "Geraniol",
+    "Products": 77
+  },
+  {
+    "Allergen": "Ferments",
+    "Products": 74
+  },
+  {
+    "Allergen": "Benzyl alcohol",
+    "Products": 67
+  },
+  {
+    "Allergen": "Citronellol",
+    "Products": 67
+  },
+  {
+    "Allergen": "Sulfur dioxide and sulfites in concentrations of more than 10 mg/kg or 10 mg/liter expressed as SO2",
+    "Products": 62
+  },
+  {
+    "Allergen": "Hazelnuts (Corylus avellana)",
+    "Products": 61
+  },
+  {
+    "Allergen": "Not specified",
+    "Products": 57
+  },
+  {
+    "Allergen": "Soy",
+    "Products": 57
+  },
+  {
+    "Allergen": "Wheat flour",
+    "Products": 57
+  },
+  {
+    "Allergen": "Wheat",
+    "Products": 92
+  },
+  {
+    "Allergen": "Lemon",
+    "Products": 53
+  },
+  {
+    "Allergen": "Phenylalanine",
+    "Products": 77
+  },
+  {
+    "Allergen": "Hexyl cinnamal",
+    "Products": 50
+  },
+  {
+    "Allergen": "Lactose",
+    "Products": 48
+  },
+  {
+    "Allergen": "Analytical constituents",
+    "Products": 47
+  },
+  {
+    "Allergen": "Yellow 5",
+    "Products": 47
+  },
+  {
+    "Allergen": "Coumarin",
+    "Products": 46
+  },
+  {
+    "Allergen": "Almonds (Amygdalus communis L.)",
+    "Products": 44
+  },
+  {
+    "Allergen": "Metabisulfite",
+    "Products": 42
+  },
+  {
+    "Allergen": "Breadcrumbs",
+    "Products": 41
+  },
+  {
+    "Allergen": "Benzyl salicylate",
+    "Products": 40
+  },
+  {
+    "Allergen": "Soy lecithin",
+    "Products": 39
+  },
+  {
+    "Allergen": "Flour",
+    "Products": 39
+  },
+  {
+    "Allergen": "Does not contain declarable allergens",
+    "Products": 38
+  },
+  {
+    "Allergen": "Sodium disulfite",
+    "Products": 37
+  },
+  {
+    "Allergen": "Potassium metabisulfite",
+    "Products": 60
+  },
+  {
+    "Allergen": "Potassium disulfite",
+    "Products": 36
+  },
+  {
+    "Allergen": "Oats or hybrids and products based on these cereals",
+    "Products": 35
+  },
+  {
+    "Allergen": "Oat flakes",
+    "Products": 34
+  },
+  {
+    "Allergen": "Dried egg white",
+    "Products": 32
+  },
+  {
+    "Allergen": "Cereals containing gluten",
+    "Products": 32
+  },
+  {
+    "Allergen": "Cereal products",
+    "Products": 31
+  },
+  {
+    "Allergen": "Cereals containing gluten and products based on these cereals",
+    "Products": 31
+  },
+  {
+    "Allergen": "Gluten-containing cereals",
+    "Products": 30
+  },
+  {
+    "Allergen": "Gluten-containing cereals and gluten-containing cereal products",
+    "Products": 30
+  },
+  {
+    "Allergen": "Buckwheat",
+    "Products": 29
+  },
+  {
+    "Allergen": "Alpha-isomethyl ionone",
+    "Products": 29
+  },
+  {
+    "Allergen": "Soy protein concentrate",
+    "Products": 29
+  },
+  {
+    "Allergen": "Cereals",
+    "Products": 28
+  },
+  {
+    "Allergen": "Oat groats",
+    "Products": 27
+  },
+  {
+    "Allergen": "Sulfite",
+    "Products": 27
+  },
+  {
+    "Allergen": "Skimmed milk powder",
+    "Products": 27
+  },
+  {
+    "Allergen": "Spelt wheat flour",
+    "Products": 25
+  },
+  {
+    "Allergen": "Whole wheat flour",
+    "Products": 24
+  },
+  {
+    "Allergen": "Whole spelt wheat flour",
+    "Products": 24
+  },
+  {
+    "Allergen": "Oatmeal",
+    "Products": 23
+  },
+  {
+    "Allergen": "Nuts - nut products",
+    "Products": 23
+  },
+  {
+    "Allergen": "Seafood",
+    "Products": 22
+  },
+  {
+    "Allergen": "Apricot",
+    "Products": 22
+  },
+  {
+    "Allergen": "Shellfish",
+    "Products": 50
+  }
+]

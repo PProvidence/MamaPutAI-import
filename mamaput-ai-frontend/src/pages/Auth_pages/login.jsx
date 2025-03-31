@@ -46,7 +46,7 @@ const LoginPage = () => {
         },
         {
           onSuccess() {
-            navigate("/dashboard");
+            navigate("/onboarding");
           },
           onError(error) {
             console.log(error.response);

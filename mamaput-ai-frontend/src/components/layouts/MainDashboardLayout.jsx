@@ -3,9 +3,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import SideNavbar from "../MainDashboardComponents/SideNavbar";
 import { useNavigate } from "react-router-dom";
-import { authClient } from "../../../lib/authClient"; 
-import { useNavigate } from "react-router-dom";
-import { authClient } from "../../../lib/authClient"; 
+import { authClient } from "../../../lib/authclient"; 
 
 const MainDashboardLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
