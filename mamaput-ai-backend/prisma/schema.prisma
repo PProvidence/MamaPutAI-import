@@ -9,6 +9,26 @@ datasource db {
 }
 
 model User {
+  id                  String       @id
+  email               String       @unique
+  password            String?
+  height              Int?
+  weight              Int?
+  DOB                 DateTime?
+  nationality         Nationality?
+  gender              Gender?
+  goal                Goal?
+  allergies           String[]
+  health_conditions   String[]
+  dietary_preferences String[]
+  name                String
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  sessions            Session[]
+  accounts            Account[]
+   meals              Meal[]
   id                 String       @id
   email              String       @unique
   password           String?
@@ -96,6 +116,28 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Meal {
+  id          String   @id @default(uuid()) 
+  name        String  
+  description String?  
+  calories    Float    
+  nutrients   Json    
+  userId      String   
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
+
+  @@map("meal")
+}
+
+
+model Feedback {
+  id        String   @id @default(uuid())
+  emotion   String
+  message   String
+  createdAt DateTime @default(now())
 }
 
 model Remainder {

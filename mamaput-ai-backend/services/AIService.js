@@ -103,7 +103,7 @@ export async function getMeals(req, res) {
                },
                { "day": "Tuesday", "meals": [ ... ] },
                ...
-               ]`,
+               ]` 
         },
       ],
     });
