@@ -21,8 +21,8 @@ const ProfileSettings = () => {
     height: "",
     weight: "",
     allergies: [],
-    healthConditions: [],
-    dietaryPreference: [],
+    health_conditions: [],
+    dietary_preferences: [],
     profilePicture: defaultProfilePic,
   });
 
@@ -35,8 +35,8 @@ const ProfileSettings = () => {
         ...prev,
         ...profileState,
         allergies: profileState.allergies || [],
-        healthConditions: profileState.healthConditions || [],
-        dietaryPreference: profileState.dietaryPreference || [],
+        health_conditions: profileState.health_conditions || [],
+        dietary_preferences: profileState.dietary_preferences || [],
         profilePicture: profileState.profilePicture ,
       }));
       setEmail(userEmail);
@@ -72,8 +72,8 @@ const ProfileSettings = () => {
       height: formData.height,
       weight: formData.weight,
       allergies: formData.allergies,
-      health_conditions: formData.healthConditions,
-      dietary_preferences: formData.dietaryPreference,
+      health_conditions: formData.health_conditions,
+      dietary_preferences: formData.dietary_preferences,
       image: formData.profilePicture,
     };
 
@@ -168,8 +168,8 @@ const ProfileSettings = () => {
         />
         <InputSection
           title="Health Conditions"
-          list={formData.healthConditions}
-          setList={(list) => handleChange("healthConditions", list)}
+          list={formData.health_conditions}
+          setList={(list) => handleChange("health_conditions", list)}
         />
 
         {/* DIETARY PREFERENCE */}
@@ -182,10 +182,10 @@ const ProfileSettings = () => {
                   <input
                     type="checkbox"
                     value={option}
-                    checked={formData.dietaryPreference.includes(option)}
+                    checked={formData.dietary_preferences.includes(option)}
                     onChange={(e) => {
                       const { value, checked } = e.target;
-                      let updatedPreferences = [...formData.dietaryPreference];
+                      let updatedPreferences = [...formData.dietary_preferences];
 
                       if (checked) {
                         updatedPreferences.push(value);
@@ -195,7 +195,7 @@ const ProfileSettings = () => {
                         );
                       }
 
-                      handleChange("dietaryPreference", updatedPreferences);
+                      handleChange("dietary_preferences", updatedPreferences);
                     }}
                     className="accent-settingsGreen"
                   />
