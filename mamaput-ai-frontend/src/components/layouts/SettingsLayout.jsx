@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import SettingsNavBar from "../SettingsComponent/SettingsNavBar";
 import { useNavigate } from "react-router-dom";
-import { authClient } from "../../../lib/authClient";
+import { authClient } from "../../../lib/authclient.js";
 
 const SettingsLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);

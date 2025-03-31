@@ -6,7 +6,7 @@ import Features from "../components/featureBlock";
 // import heroMenuImg4 from "../assets/img/center.svg";
 import heroImage from "../assets/img/heroImage.svg";
 import { Link } from "react-router-dom";
-import { authClient } from "../../lib/authClient";
+import { authClient } from "../../lib/authclient.js";
 
 const Home = () => {
   const session = new Promise((resolve, reject) => {

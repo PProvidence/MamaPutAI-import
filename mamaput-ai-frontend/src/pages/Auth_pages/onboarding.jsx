@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Check, XCircle } from "lucide-react";
+import { useState } from "react";
 import { RiMentalHealthFill } from "react-icons/ri";
-import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import allergensData from "../../data/allergens.json"; // Assuming you have a JSON file with allergens data
-import { XCircle } from "lucide-react";
 
 const side = [
   {
