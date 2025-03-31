@@ -5,17 +5,17 @@ import formatDate from '../../utils/dateUtil';
 
 const Header = () => {
   const profilePicture = useSelector((state) => state.userSettings.profileState.profilePicture);
-  // const currentDate = new Date().toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" });
+  const name = useSelector((state) => state.userSettings.name);
+  // const firstName = useSelector((state) => state.userSettings.profileState.firstName);
 
   const currentDate = new Date();
   const formattedDate = formatDate(currentDate, 'dd MMM yyyy');//  Use 'DD MMMM YYYY'
-
 
   return (
     <div className="flex justify-between items-center mb-6">
     <div>
       <p className="text-sm font-medium text-gray-600">{formattedDate}</p>
-      <h1 className="text-2xl font-bold">Howdy John!</h1>
+      <h1 className="text-2xl font-bold">Howdy <span>{name}</span>!</h1>
     </div>
     <div className="flex items-center space-x-3">
       <Link to="/dashboard/notifications">

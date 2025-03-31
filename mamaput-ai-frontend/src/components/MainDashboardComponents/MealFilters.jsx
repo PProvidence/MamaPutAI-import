@@ -1,8 +1,9 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { ChevronDown } from "lucide-react";
+// import { IoFilterOutline } from "react-icons/io5";
 
-const MealFilters = ({ filters, setFilters }) => {
+const MealFilters = ({ filters, setFilters, setFiltersActive }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
@@ -17,6 +18,24 @@ const MealFilters = ({ filters, setFilters }) => {
     }));
   };
 
+  // Apply filters and send them to the server
+  const applyFilters = () => {
+    toggleDropdown(); // Close dropdown on Apply
+
+    // Send filters to the backend
+    fetch("http://localhost:3005/apply-filters", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filters),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("Filters Applied:", data))
+      .catch((error) => console.error("Error applying filters:", error));
+
+    // Mark filters as active
+    setFiltersActive(true);
+  };
+
   return (
     <div className="relative">
       <button
@@ -27,7 +46,7 @@ const MealFilters = ({ filters, setFilters }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-12 w-72 bg-white shadow-lg rounded-lg p-4 z-50">
+        <div className="absolute left-0 top-12 w-40 bg-white shadow-lg rounded-lg p-4 z-50">
           {/* Budget Filter */}
           <div className="mb-3">
             <h3 className="text-gray-700 font-semibold">Budget</h3>
@@ -59,9 +78,10 @@ const MealFilters = ({ filters, setFilters }) => {
               </label>
             ))}
           </div>
-           {/* Apply Button */}
+
+          {/* Apply Button */}
           <button
-            onClick={toggleDropdown} // Close dropdown on Apply
+            onClick={applyFilters}
             className="w-full mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Apply Filters
@@ -76,6 +96,7 @@ const MealFilters = ({ filters, setFilters }) => {
 MealFilters.propTypes = {
   filters: PropTypes.object.isRequired,
   setFilters: PropTypes.func.isRequired,
+  setFiltersActive: PropTypes.func.isRequired,
 };
 
 export default MealFilters;

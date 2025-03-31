@@ -52,6 +52,7 @@ export const updateUserDetails = createAsyncThunk(
 
 const initialState = {
   email: "",
+  name: "",
   profileState: {
     firstName: "",
     lastName: "",
@@ -92,6 +93,7 @@ const initialState = {
 // Update User State
 const updateUserState = (state, payload) => {
   state.email = payload.email;
+  state.name = payload.name;
   state.profileState = {
     ...state.profileState,
     ...payload.profileState,

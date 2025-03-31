@@ -29,16 +29,16 @@ const Feedback = () => {
 
     // Later Remove simulation to Handle form submission logic here - The following block should ONLY run when you have a working backend.
     // Start Simulation Block
-    console.log('Simulated feedback submission:', { emotion: selectedEmotion, message: feedback });
-    setFeedback('');
-    setSelectedEmotion(null);
-    alert('Feedback submitted successfully!');
+    // console.log('Simulated feedback submission:', { emotion: selectedEmotion, message: feedback });
+    // setFeedback('');
+    // setSelectedEmotion(null);
+    // alert('Feedback submitted successfully!');
     //End Simulation Block
 
-    /*
+    
     //Commented out fetch because no backend endpoint is available yet
 
-    fetch('/api/feedback', { // Replace '/api/feedback' with your actual API endpoint
+    fetch('http://localhost:3005/feedback/store-feedback', { // Replace '/api/feedback' with your actual API endpoint
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const Feedback = () => {
       console.error('Error submitting feedback:', error);
       alert('Network error. Please try again.');
     });
-    */
+
   };
 
   const handleGoBack = () => {
