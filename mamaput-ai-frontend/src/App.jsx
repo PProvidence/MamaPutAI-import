@@ -26,7 +26,7 @@ import NutritionTracker from "./pages/MainDashboard/NutriTracker";
 import Reminders from "./pages/MainDashboard/Reminder";
 import History from "./pages/MainDashboard/History";
 import Feedback from "./pages/MainDashboard/Feedback";
-
+import EmailVerifiedScreen from "./pages/Auth_pages/emailverified";
 function App() {
   return (
     <Router>
@@ -42,6 +42,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/emailverified" element={ <EmailVerifiedScreen/>} />
         <Route
           path="/pricing"
           element={
