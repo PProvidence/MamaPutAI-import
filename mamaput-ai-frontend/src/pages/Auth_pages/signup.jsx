@@ -102,25 +102,29 @@ const SignupPage = () => {
   };
 
   const handleVerify = async () => {
-    setIsLoading({ verify: true });
-    const { error } = await authClient.emailOtp.verifyEmail(
-      {
-        email: formData.email,
-        otp: OTP,
-        
-      },
-      {
-        onSuccess() {
-          navigate("/dashboard");
+    setIsLoading((prev) => ({ ...prev, verify: true }));
+    try {
+      const { error } = await authClient.emailOtp.verifyEmail(
+        {
+          email: formData.email,
+          otp: OTP,
         },
-      }
-    );
+        {
+          onSuccess() {
+            navigate("/onboarding");
+          },
+        }
+      );
 
-    if (error) {
-      setError(error.message || "An unknown error occurred");
-      throw new Error(error.message);
+      if (error) {
+        setError(error.message || "An unknown error occurred");
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading((prev) => ({ ...prev, verify: false }));
     }
-    setIsLoading((prev) => ({ ...prev, verify: false }));
   };
 
   return (
