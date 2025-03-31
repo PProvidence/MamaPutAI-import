@@ -46,7 +46,7 @@ const LoginPage = () => {
         },
         {
           onSuccess() {
-            navigate("/dashboard");
+            navigate("/onboarding");
           },
           onError(error) {
             console.log(error.response);
@@ -144,6 +144,7 @@ const LoginPage = () => {
                 </p>
                 <p className="text-red-500 text-center">{error}</p>
                 <button
+                  type="submit"
                   disabled={!isFormValid || isLoading}
                   onClick={handleSubmit}
                   className="w-full text-white py-2 rounded-lg font-semibold transition bg-green-600 hover:bg-green-700 disabled:bg-green-200 disabled:cursor-not-allowed"

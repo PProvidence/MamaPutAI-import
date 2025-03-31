@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { Check } from "lucide-react";
+import Select from "react-select";
+import allergensData from "../../data/allergens.json"; // Assuming you have a JSON file with allergens data
+import { XCircle } from "lucide-react";
 
 const side = [
   {
@@ -81,15 +84,48 @@ const ProgressBar = ({ currentIndex }) => {
   );
 };
 
+const healthConditions = [
+  "Ulcer",
+  "Diabetes",
+  "Hypertension",
+  "Asthma",
+  "Heart Disease",
+];
+const dietaryPreferences = [
+  "Vegetarian",
+  "Vegan",
+  "Pescatarian",
+  "Keto",
+  "Halal",
+  "Kosher",
+  "Paleo",
+];
+
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState("gender"); // 'gender' | 'goal' | 'background' | 'allergies'
   const [selectedGender, setSelectedGender] = useState("");
   const [selectedGoal, setSelectedGoal] = useState([]);
+  const [selectedAllergies, setSelectedAllergies] = useState([]);
+  const [selectedHealthCondition, setSelectedHealthCondition] = useState([]);
+  const [selectedDietaryPreference, setSelectedDietaryPreference] = useState(
+    []
+  );
+  const [unit, setUnit] = useState("metric"); // "metric" or "imperial"
+  const [height, setHeight] = useState({ cm: "", feet: "", inches: "" });
+  const [weight, setWeight] = useState({ kg: "", lbs: "" });
+  const [showModal, setShowModal] = useState(false); // Track modal state
+  const navigate = useNavigate();
   const currentIndex = step.indexOf(currentStep);
   const nextStep = () => {
     const currentIndex = step.indexOf(currentStep);
     if (currentIndex < step.length - 1) {
       setCurrentStep(step[currentIndex + 1]);
+    } else {
+      // Show modal when completing the final step
+      setShowModal(true);
+      setTimeout(() => {
+        navigate("/dashboard"); // Redirect after 2 seconds
+      }, 2000);
     }
   };
   const prevStep = () => {
@@ -97,12 +133,41 @@ const Onboarding = () => {
       setCurrentStep(step[currentIndex - 1]);
     }
   };
+
+  const toggleUnit = () => {
+    if (unit === "metric") {
+      setUnit("imperial");
+      const cm = height.cm ? parseFloat(height.cm) : 0;
+      setHeight({
+        cm: "",
+        feet: Math.floor(cm / 2.54 / 12),
+        inches: Math.round((cm / 2.54) % 12),
+      });
+      const kg = weight.kg ? parseFloat(weight.kg) : 0;
+      setWeight({ kg: "", lbs: Math.round(kg * 2.20462) });
+    } else {
+      setUnit("metric");
+      const feet = height.feet ? parseFloat(height.feet) : 0;
+      const inches = height.inches ? parseFloat(height.inches) : 0;
+      setHeight({
+        cm: Math.round((feet * 12 + inches) * 2.54),
+        feet: "",
+        inches: "",
+      });
+      const lbs = weight.lbs ? parseFloat(weight.lbs) : 0;
+      setWeight({ kg: Math.round(lbs / 2.20462), lbs: "" });
+    }
+  };
+
+  const allergyOptions = allergensData.map((allergen) => ({
+    label: allergen.Allergen, // Use allergen name as label
+    value: allergen.Allergen, // Use allergen name as value
+  }));
   const toggleGoal = (goal) => {
-    setSelectedGoal(
-      (prevGoal) =>
-        prevGoal.includes(goal)
-          ? prevGoal.filter((g) => g !== goal) // Remove if already selected
-          : [...prevGoal, goal] // Add if not selected
+    setSelectedGoal((prevGoals) =>
+      prevGoals.includes(goal)
+        ? prevGoals.filter((g) => g !== goal)
+        : [...prevGoals, goal]
     );
   };
 
@@ -182,8 +247,19 @@ const Onboarding = () => {
                 Skip this step
               </button>
               <button
-                onClick={() => setCurrentStep("goal")}
-                className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"
+                onClick={() => {
+                  if (selectedGender) {
+                    nextStep();
+                  } else {
+                    alert("Please select your gender to proceed.");
+                  }
+                }}
+                className={`w-25 mt-4 rounded-md py-2 text-white ${
+                  selectedGender
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-gray-400 cursor-not-allowed"
+                } text-sm transition`}
+                disabled={!selectedGender}
               >
                 Next Step
               </button>
@@ -251,8 +327,19 @@ const Onboarding = () => {
                 Skip this step
               </button>
               <button
-                onClick={nextStep}
-                className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"
+                onClick={() => {
+                  if (selectedGoal.length > 0) {
+                    nextStep();
+                  } else {
+                    alert("Please select at least one goal to proceed.");
+                  }
+                }}
+                className={`w-25 mt-4 rounded-md py-2 text-white ${
+                  selectedGoal.length > 0
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-gray-400 cursor-not-allowed"
+                } text-sm transition`}
+                disabled={selectedGoal.length === 0}
               >
                 Next Step
               </button>
@@ -280,7 +367,105 @@ const Onboarding = () => {
                 about you
               </p>
             </div>
-            <div className="flex justify-between mt-6  ">
+
+            {/* Unit Toggle Switch */}
+            <div className="flex items-center my-4 space-x-4">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  value=""
+                  className="sr-only peer"
+                  checked={unit === "imperial"}
+                  onChange={toggleUnit}
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-green-300 dark:bg-gray-700 peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 rounded-full"></div>
+                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                  {unit === "metric" ? "Metric" : "Imperial"}
+                </span>
+              </label>
+            </div>
+
+            <div className="flex gap-6">
+              {/* Height Input */}
+              <div className="my-4">
+                <label className="block font-semibold">Height</label>
+                {unit === "metric" ? (
+                  <input
+                    type="number"
+                    value={height.cm}
+                    onChange={(e) =>
+                      setHeight({ ...height, cm: e.target.value })
+                    }
+                    placeholder="Enter height in cm"
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                ) : (
+                  <div className="flex space-x-2">
+                    <input
+                      type="number"
+                      value={height.feet}
+                      onChange={(e) =>
+                        setHeight({ ...height, feet: e.target.value })
+                      }
+                      placeholder="Feet"
+                      className="border border-gray-300 p-2 rounded w-1/2"
+                    />
+                    <input
+                      type="number"
+                      value={height.inches}
+                      onChange={(e) =>
+                        setHeight({ ...height, inches: e.target.value })
+                      }
+                      placeholder="Inches"
+                      className="border border-gray-300 p-2 rounded w-1/2"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Weight Input */}
+              <div className="my-4">
+                <label className="block font-semibold">Weight</label>
+                {unit === "metric" ? (
+                  <input
+                    type="number"
+                    value={weight.kg}
+                    onChange={(e) =>
+                      setWeight({ ...weight, kg: e.target.value })
+                    }
+                    placeholder="Enter weight in kg"
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                ) : (
+                  <input
+                    type="number"
+                    value={weight.lbs}
+                    onChange={(e) =>
+                      setWeight({ ...weight, lbs: e.target.value })
+                    }
+                    placeholder="Enter weight in lbs"
+                    className="border border-gray-300  p-2 rounded w-full"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-gray-900">
+                Date of Birth
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  className="w-full p-2 pl-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-500 appearance-none"
+                  onFocus={(e) => (e.target.style.color = "black")} // Ensure input text turns black on focus
+                  style={{
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between mt-6">
               <button
                 onClick={prevStep}
                 className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"
@@ -294,8 +479,34 @@ const Onboarding = () => {
                 Skip this step
               </button>
               <button
-                onClick={nextStep}
-                className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"
+                onClick={() => {
+                  if (
+                    (height.cm && height.cm !== "") ||
+                    (height.feet && height.feet !== "") ||
+                    (weight.kg && weight.kg !== "") ||
+                    (weight.lbs && weight.lbs !== "")
+                  ) {
+                    nextStep();
+                  } else {
+                    alert("Please enter your height or weight to proceed.");
+                  }
+                }}
+                className={`w-25 mt-4 rounded-md py-2 text-white ${
+                  (height.cm && height.cm !== "") ||
+                  (height.feet && height.feet !== "") ||
+                  (weight.kg && weight.kg !== "") ||
+                  (weight.lbs && weight.lbs !== "")
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-gray-400 cursor-not-allowed"
+                } text-sm transition`}
+                disabled={
+                  !(
+                    (height.cm && height.cm !== "") ||
+                    (height.feet && height.feet !== "") ||
+                    (weight.kg && weight.kg !== "") ||
+                    (weight.lbs && weight.lbs !== "")
+                  )
+                }
               >
                 Next Step
               </button>
@@ -324,6 +535,116 @@ const Onboarding = () => {
                 worsen the situation.
               </p>
             </div>
+            {/* Allergies */}
+            <div className="flex flex-col mb-6">
+              <label className="font-semibold mb-2">Allergies</label>
+              <Select
+                options={allergyOptions}
+                isMulti
+                value={selectedAllergies}
+                onChange={setSelectedAllergies}
+                className="border rounded-lg"
+                classNamePrefix="custom-select"
+                placeholder="Select allergies..."
+              />
+              {selectedAllergies.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedAllergies.map((allergy) => (
+                    <button
+                      key={allergy.value}
+                      type="button"
+                      className="bg-red-100 text-red-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
+                      onClick={() =>
+                        setSelectedAllergies(
+                          selectedAllergies.filter(
+                            (a) => a.value !== allergy.value
+                          )
+                        )
+                      }
+                    >
+                      <span>{allergy.label}</span>{" "}
+                      {/* Access the label property */}
+                      <XCircle className="h-4 w-4 fill-current" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Health Condition */}
+            <div className="flex flex-col mb-6">
+              <label className="font-semibold mb-2">Health Condition</label>
+              <Select
+                options={healthConditions.map((h) => ({ label: h, value: h }))}
+                value={selectedHealthCondition}
+                onChange={setSelectedHealthCondition}
+                isMulti
+                className="border rounded-lg"
+                classNamePrefix="custom-select"
+                placeholder="Select health condition..."
+              />
+              {selectedHealthCondition.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedHealthCondition.map((condition) => (
+                    <button
+                      key={condition.value} // Assuming you're using react-select for this as well
+                      type="button"
+                      className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
+                      onClick={() =>
+                        setSelectedHealthCondition(
+                          selectedHealthCondition.filter(
+                            (c) => c.value !== condition.value
+                          )
+                        )
+                      }
+                    >
+                      <span>{condition.label}</span>{" "}
+                      {/* Access the label property */}
+                      <XCircle className="h-4 w-4 fill-current" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Dietary Preference */}
+            <div className="flex flex-col mb-6">
+              <label className="font-semibold mb-2">Dietary Preference</label>
+              <Select
+                options={dietaryPreferences.map((d) => ({
+                  label: d,
+                  value: d,
+                }))}
+                value={selectedDietaryPreference}
+                onChange={setSelectedDietaryPreference}
+                isMulti
+                className="border rounded-lg"
+                classNamePrefix="custom-select"
+                placeholder="Select dietary preference..."
+              />
+              {selectedDietaryPreference.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedDietaryPreference.map((preference) => (
+                    <button
+                      key={preference.value} //Assuming you're using react-select for this as well
+                      type="button"
+                      className="bg-green-100 text-green-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
+                      onClick={() =>
+                        setSelectedDietaryPreference(
+                          selectedDietaryPreference.filter(
+                            (p) => p.value !== preference.value
+                          )
+                        )
+                      }
+                    >
+                      <span>{preference.label}</span>
+                      <XCircle className="h-4 w-4 fill-current" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="flex justify-between mt-6  ">
               <button
                 onClick={prevStep}
@@ -332,17 +653,66 @@ const Onboarding = () => {
                 Back
               </button>
               <button
-                onClick={nextStep}
+                onClick={() => {
+                  setShowModal(true); // Show modal first
+                  setTimeout(() => {
+                    navigate("/dashboard"); // Redirect to dashboard after delay
+                  }, 2000); // Adjust timing if needed
+                }}
                 className="w-25 mt-4 rounded-md py-2 bg-white text-green-600 text-sm font-semibold shadow-lg transition"
               >
                 Skip this step
               </button>
               <button
-                onClick={nextStep}
-                className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"
+                onClick={() => {
+                  // Check if any allergy, health condition, or dietary preference is selected
+                  if (
+                    selectedAllergies.length > 0 ||
+                    selectedHealthCondition.length > 0 ||
+                    selectedDietaryPreference.length > 0
+                  ) {
+                    setShowModal(true); // Show modal
+                    setTimeout(() => {
+                      navigate("/dashboard"); // Redirect after 2 sec
+                    }, 2000);
+                  } else {
+                    // Optionally, provide feedback to the user that they need to select something
+                    alert(
+                      "Please select at least one allergy, health condition, or dietary preference to proceed."
+                    );
+                  }
+                }}
+                className={`w-25 mt-4 rounded-md py-2 text-white ${
+                  selectedAllergies.length > 0 ||
+                  selectedHealthCondition.length > 0 ||
+                  selectedDietaryPreference.length > 0
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-gray-400 cursor-not-allowed" // Disable the button if no input
+                } text-sm transition`}
+                disabled={
+                  selectedAllergies.length === 0 &&
+                  selectedHealthCondition.length === 0 &&
+                  selectedDietaryPreference.length === 0
+                }
               >
-                Next Step
+                {currentIndex === step.length - 1 ? "Complete" : "Next"}
               </button>
+            {/* Logging You In Modal */}
+            {showModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Logging you in...
+                  </h2>
+                  <p className="text-gray-500 mt-2">
+                    Please wait while we redirect you.
+                  </p>
+                  <div className="mt-4 flex justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-green-500"></div>
+                  </div>
+                </div>
+              </div>
+            )}
             </div>
           </>
         )}
@@ -350,4 +720,5 @@ const Onboarding = () => {
     </div>
   );
 };
+
 export default Onboarding;
