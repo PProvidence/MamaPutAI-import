@@ -3,7 +3,9 @@ import { useState } from "react";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import allergensData from "../../data/allergens.json"; // Assuming you have a JSON file with allergens data
+import allergensData from "../../data/allergens.json";
+import { useDispatch } from "react-redux";
+import { updateUserDetails, getUserDetails } from "../../../redux/userSettingsSlice";
 
 const side = [
   {
@@ -101,6 +103,7 @@ const dietaryPreferences = [
 ];
 
 const Onboarding = () => {
+  const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState("gender"); // 'gender' | 'goal' | 'background' | 'allergies'
   const [selectedGender, setSelectedGender] = useState("");
   const [selectedGoal, setSelectedGoal] = useState([]);
@@ -168,6 +171,35 @@ const Onboarding = () => {
         ? prevGoals.filter((g) => g !== goal)
         : [...prevGoals, goal]
     );
+  };
+
+  // Save profile details to the backend
+  const handleSave = async () => {
+    try {
+      // Transform frontend data to match backend format
+      const updatedDetails = {
+        gender: selectedGender,
+        height: parseInt(height.cm),
+        weight: unit === "metric" ? parseInt(weight.kg) : parseInt(weight.lbs),
+        allergies: selectedAllergies,
+        health_conditions: selectedHealthCondition,
+        dietary_preferences: selectedDietaryPreference,
+      };
+
+      console.log("Saving Profile Details:", updatedDetails);
+
+      // Dispatch the updateUserDetails action and wait for completion
+      await dispatch(updateUserDetails(updatedDetails)).unwrap();
+
+      // Fetch the updated details after successful save
+      dispatch(getUserDetails());
+
+      console.log("Profile details saved successfully!");
+      alert("Profile details saved successfully!");
+    } catch (error) {
+      console.error("Error saving profile details:", error);
+      alert("Failed to save profile details. Please try again.");
+    }
   };
 
   return (
@@ -670,6 +702,7 @@ const Onboarding = () => {
                     selectedHealthCondition.length > 0 ||
                     selectedDietaryPreference.length > 0
                   ) {
+                    handleSave(); // Call handleSave function
                     setShowModal(true); // Show modal
                     setTimeout(() => {
                       navigate("/dashboard"); // Redirect after 2 sec
@@ -696,22 +729,23 @@ const Onboarding = () => {
               >
                 {currentIndex === step.length - 1 ? "Complete" : "Next"}
               </button>
-            {/* Logging You In Modal */}
-            {showModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    Logging you in...
-                  </h2>
-                  <p className="text-gray-500 mt-2">
-                    Please wait while we redirect you.
-                  </p>
-                  <div className="mt-4 flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-green-500"></div>
+
+              {/* Logging You In Modal */}
+              {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      Logging you in...
+                    </h2>
+                    <p className="text-gray-500 mt-2">
+                      Please wait while we redirect you.
+                    </p>
+                    <div className="mt-4 flex justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-green-500"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
           </>
         )}
