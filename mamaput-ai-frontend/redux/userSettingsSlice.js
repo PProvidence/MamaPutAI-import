@@ -1,7 +1,8 @@
   import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
   import defaultProfilePic from "../src/assets/img/default-profile.jpg";
 
-  //  Getting the user's default details from the onboarding process
+
+  // Getting the user's default details from the onboarding process
   export const getUserDetails = createAsyncThunk(
     "userSettings/getUserDetails",
     async (_, { rejectWithValue }) => {
@@ -27,8 +28,8 @@
     async (updatedDetails, { rejectWithValue }) => {
       const url = "http://localhost:3005/user/edit/me";
 
-      // Transform frontend state to backend format
-      const backendPayload = {
+      // Prepare JSON payload
+      const payload = {
         name: updatedDetails.name,
         DOB: updatedDetails.DOB,
         gender: updatedDetails.gender,
@@ -37,40 +38,60 @@
         allergies: updatedDetails.allergies,
         health_conditions: updatedDetails.health_conditions,
         dietary_preferences: updatedDetails.dietary_preferences,
-        image: updatedDetails.image,
         email: updatedDetails.email,
       };
+
+      // Convert image to base64 if present
+      if (updatedDetails.image instanceof File) {
+        const toBase64 = (file) =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+          });
+
+        payload.profilePicture = await toBase64(updatedDetails.image);
+      }
 
       try {
         const response = await fetch(url, {
           method: "POST",
           credentials: "include",
-          mode: "cors",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(backendPayload),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
-          throw new Error(
-            "Failed to update user details: " + response.statusText
-          );
+          const errorMessage = await response.text();
+          throw new Error(errorMessage || "Failed to update user details");
         }
 
         const data = await response.json();
-        return data;
+
+        // ✅ Handle response structure correctly
+        if (data.user) {
+          console.log("User details updated successfully:", data.user);
+          return data.user; // Return updated user data
+        } else {
+          throw new Error(data.message || "Unexpected response from server");
+        }
       } catch (error) {
+        console.error("Error updating user details:", error.message);
         return rejectWithValue(error.message);
       }
     }
   );
 
 
+
+
   const initialState = {
     email: "",
     profileState: {
-      name:"",
+      name: "",
       DOB: "",
       height: "",
       weight: "",
@@ -79,28 +100,9 @@
       allergies: [],
       healthConditions: [],
       dietaryPreference: [],
-      profilePicture: defaultProfilePic,
+      image: defaultProfilePic,
     },
-
-    notificationSettings: {
-      alerts: { mealPlanReminder: true, hydrationAlert: true },
-      pushNotifications: { calorieCounter: true, weeklySummary: true },
-      feedbackAndPersonalization: { healthAlerts: true, badges: true },
-      alertsEnabled: true,
-      pushNotificationsEnabled: true,
-      feedbackAndPersonalizationEnabled: true,
-    },
-
-    accountSettings: {
-      password: "*******",
-      disableAccount: false,
-    },
-
-    preferences: {
-      themeLight: true,
-      language: "en",
-    },
-
+    // other state variables...
     isLoading: false,
     error: null,
   };
@@ -120,20 +122,7 @@
       allergies: payload.allergies,
       healthConditions: payload.health_conditions,
       dietaryPreference: payload.dietary_preferences,
-      profilePicture: payload.image,
-    };
-
-    state.notificationSettings = {
-      ...state.notificationSettings,
-    };
-
-    state.accountSettings = {
-      ...state.accountSettings,
-      password: payload.password,
-    };
-
-    state.preferences = {
-      ...state.preferences,
+      image: payload.profilePicture || state.profileState.image,
     };
 
     state.isLoading = false;
@@ -148,7 +137,6 @@
       updateEmail(state, action) {
         state.email = action.payload;
       },
-
       // Update a specific field in profile settings
       updateProfileField(state, action) {
         const { field, value } = action.payload;
@@ -156,61 +144,8 @@
           state.profileState[field] = value;
         }
       },
-
-      addToProfileArray(state, action) {
-        const { field, value } = action.payload;
-        if (Array.isArray(state.profileState[field])) {
-          state.profileState[field].push(value);
-        }
-      },
-
-      removeFromProfileArray(state, action) {
-        const { field, value } = action.payload;
-        if (Array.isArray(state.profileState[field])) {
-          state.profileState[field] = state.profileState[field].filter(
-            (item) => item !== value
-          );
-        }
-      },
-
-      toggleCategoryEnabled(state, action) {
-        const category = action.payload;
-        const isEnabled = !state.notificationSettings[`${category}Enabled`];
-
-        state.notificationSettings[`${category}Enabled`] = isEnabled;
-
-        Object.keys(state.notificationSettings[category]).forEach((setting) => {
-          state.notificationSettings[category][setting] = isEnabled;
-        });
-      },
-
-      toggleNotificationSetting(state, action) {
-        const { category, setting } = action.payload;
-        state.notificationSettings[category][setting] =
-          !state.notificationSettings[category][setting];
-      },
-
-      setNotificationSettings(state, action) {
-        state.notificationSettings = action.payload;
-      },
-
-      updateAccountSetting(state, action) {
-        const { field, value } = action.payload;
-        if (Object.prototype.hasOwnProperty.call(state.accountSettings, field)) {
-          state.accountSettings[field] = value;
-        }
-      },
-
-      updateTheme(state, action) {
-        state.preferences.themeLight = action.payload;
-      },
-
-      updateLanguage(state, action) {
-        state.preferences.language = action.payload;
-      },
+      // other reducers...
     },
-
-    // ✅ Using Helper Function in Extra Reducers
     extraReducers: (builder) => {
       builder
         .addCase(getUserDetails.pending, (state) => {
@@ -225,33 +160,26 @@
           state.isLoading = false;
           state.error = action.payload;
         })
-
         .addCase(updateUserDetails.pending, (state) => {
           state.isLoading = true;
           state.error = null;
         })
         .addCase(updateUserDetails.fulfilled, (state, action) => {
           state.isLoading = false;
-          updateUserState(state, action.payload);
+          updateUserState(state, action.payload); // action.payload now has the user data
         })
         .addCase(updateUserDetails.rejected, (state, action) => {
           state.isLoading = false;
           state.error = action.payload;
         });
-    },
+    }
+    
   });
 
   export const {
     updateEmail,
     updateProfileField,
-    addToProfileArray,
-    removeFromProfileArray,
-    toggleCategoryEnabled,
-    toggleNotificationSetting,
-    setNotificationSettings,
-    updateAccountSetting,
-    updateTheme,
-    updateLanguage,
+    // other actions...
   } = userSettingsSlice.actions;
 
   export default userSettingsSlice.reducer;

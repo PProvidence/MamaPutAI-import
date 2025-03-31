@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InputSection from "../../components/SettingsComponent/InputSection";
 import {
-  updateUserDetails,
   getUserDetails,
+  updateUserDetails,
 } from "../../../redux/userSettingsSlice";
 import { Pencil } from "lucide-react";
 import defaultProfilePic from "../../assets/img/default-profile.jpg";
@@ -12,6 +12,7 @@ const ProfileSettings = () => {
   const dispatch = useDispatch();
   const profileState = useSelector((state) => state.userSettings.profileState);
   const userEmail = useSelector((state) => state.userSettings.email);
+  const isLoading = useSelector((state) => state.userSettings.isLoading);
 
   // Local State
   const [formData, setFormData] = useState({
@@ -23,11 +24,15 @@ const ProfileSettings = () => {
     allergies: [],
     health_conditions: [],
     dietary_preferences: [],
-    profilePicture: defaultProfilePic,
+    image: defaultProfilePic,
   });
 
   const [email, setEmail] = useState("");
   const [preview, setPreview] = useState(defaultProfilePic);
+
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, [dispatch]);
 
   useEffect(() => {
     if (profileState) {
@@ -37,10 +42,10 @@ const ProfileSettings = () => {
         allergies: profileState.allergies || [],
         health_conditions: profileState.health_conditions || [],
         dietary_preferences: profileState.dietary_preferences || [],
-        profilePicture: profileState.profilePicture ,
+        image: profileState.image,
       }));
       setEmail(userEmail);
-      setPreview(profileState.profilePicture || defaultProfilePic);
+      setPreview(profileState.image || defaultProfilePic);
     }
   }, [profileState, userEmail]);
 
@@ -50,50 +55,55 @@ const ProfileSettings = () => {
   };
 
   // Profile Picture Preview
-  const handleProfilePictureChange = (event) => {
+  const handleImageChange = (event) => {
     const file = event.target.files[0];
-    if (file) {
+    if (file && file.type.match("image.*")) {
+      setFormData((prev) => ({ ...prev, image: file }));
+
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result);
       reader.readAsDataURL(file);
-
-      setFormData((prev) => ({ ...prev, profilePicture: file }));
+    } else {
+      alert("Invalid image file. Please upload an image.");
     }
   };
 
   // Save Profile Data
   const handleSave = async () => {
-    // Transform frontend data to backend format
-    const updatedDetails = {
-      email,
-      name: formData.name,
- 
-      gender: formData.gender,
-      height: formData.height,
-      weight: formData.weight,
-      allergies: formData.allergies,
-      health_conditions: formData.health_conditions,
-      dietary_preferences: formData.dietary_preferences,
-      image: formData.profilePicture,
-    };
-
     try {
-      if (formData.profilePicture instanceof File) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("profilePicture", formData.profilePicture);
-      
-        // Upload the picture and get the URL
-        // const url = await uploadProfilePicture(formDataUpload);
-        // updatedDetails.profilePicture = url;
-      } else {
-        updatedDetails.profilePicture = formData.profilePicture;
-      }
+      // Transform frontend data to backend format
+      const updatedDetails = {
+        email,
+        name: formData.name,
+        DOB: formData.DOB,
+        gender: formData.gender,
+        height: parseInt(formData.height),
+        weight: parseInt(formData.weight),
+        allergies: formData.allergies,
+        health_conditions: formData.health_conditions,
+        dietary_preferences: formData.dietary_preferences,
+        image: formData.image instanceof File ? formData.image : null,
+      };
+
+      console.log(updatedDetails);
+
+      // Dispatch the updateUserDetails action and wait for completion
       await dispatch(updateUserDetails(updatedDetails)).unwrap();
+
+      // Fetch the updated details after successful save
+      dispatch(getUserDetails());
+
+      console.log("Profile details saved successfully:", updatedDetails);
       alert("Profile details saved successfully!");
     } catch (error) {
       alert("Failed to save profile details: " + error);
     }
   };
+
+  // Show loading spinner or message
+  if (isLoading) {
+    return <div>Loading...</div>;  // Or you can use a spinner here
+  }
 
   return (
     <div className="p-6">
@@ -118,7 +128,7 @@ const ProfileSettings = () => {
                 id="profilePic"
                 accept="image/*"
                 className="hidden"
-                onChange={handleProfilePictureChange}
+                onChange={handleImageChange}
               />
             </label>
           </div>
@@ -128,7 +138,6 @@ const ProfileSettings = () => {
         </div>
 
         {/* PERSONAL DETAILS */}
-
         <label className="flex flex-col gap-2">
           <span>Name</span>
           <input
@@ -136,8 +145,47 @@ const ProfileSettings = () => {
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
             className="form-input-field"
+            disabled={isLoading} // Disable input while loading
           />
         </label>
+
+        {/* Weight, height and gender */}
+        <div className="flex flex-col md:flex-row md:gap-10">
+          <label className="flex flex-col gap-2">
+            <span>Gender</span>
+            <select
+              value={formData.gender}
+              onChange={(e) => handleChange("gender", e.target.value)}
+              className="form-input-field"
+              disabled={isLoading} // Disable input while loading
+            >
+              <option value="Male">MALE</option>
+              <option value="Female">FEMALE</option>
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-2">
+            <span>Height (cm)</span>
+            <input
+              type="number"
+              value={formData.height}
+              onChange={(e) => handleChange("height", e.target.value)}
+              className="form-input-field"
+              disabled={isLoading} // Disable input while loading
+            />
+          </label>
+
+          <label className="flex flex-col gap-2">
+            <span>Weight (kg)</span>
+            <input
+              type="number"
+              value={formData.weight}
+              onChange={(e) => handleChange("weight", e.target.value)}
+              className="form-input-field"
+              disabled={isLoading} // Disable input while loading
+            />
+          </label>
+        </div>
 
         <div className="flex flex-col md:flex-row md:gap-10">
           <label className="flex flex-col gap-2">
@@ -147,6 +195,7 @@ const ProfileSettings = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="form-input-field"
+              disabled={isLoading} // Disable input while loading
             />
           </label>
           <label className="flex flex-col gap-2">
@@ -156,6 +205,7 @@ const ProfileSettings = () => {
               value={formData.DOB}
               onChange={(e) => handleChange("DOB", e.target.value)}
               className="form-input-field"
+              disabled={isLoading} // Disable input while loading
             />
           </label>
         </div>
@@ -174,7 +224,7 @@ const ProfileSettings = () => {
 
         {/* DIETARY PREFERENCE */}
         <div className="section">
-          <h2>Dietary Preference</h2>
+          <h2 className="form--heading">Dietary Preference</h2>
           <div className="flex flex-col gap-2">
             {["Vegetarian", "Vegan", "Pescatarian", "Halal", "Kosher"].map(
               (option) => (
@@ -185,7 +235,9 @@ const ProfileSettings = () => {
                     checked={formData.dietary_preferences.includes(option)}
                     onChange={(e) => {
                       const { value, checked } = e.target;
-                      let updatedPreferences = [...formData.dietary_preferences];
+                      let updatedPreferences = [
+                        ...formData.dietary_preferences,
+                      ];
 
                       if (checked) {
                         updatedPreferences.push(value);
@@ -198,6 +250,7 @@ const ProfileSettings = () => {
                       handleChange("dietary_preferences", updatedPreferences);
                     }}
                     className="accent-settingsGreen"
+                    disabled={isLoading} // Disable checkbox while loading
                   />
                   {option}
                 </label>
@@ -206,8 +259,13 @@ const ProfileSettings = () => {
           </div>
         </div>
 
-        <button type="button" className="form-button" onClick={handleSave}>
-          Save Changes
+        <button
+          type="button"
+          className="form-button"
+          onClick={handleSave}
+          disabled={isLoading} // Disable button during loading
+        >
+          {isLoading ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </div>
