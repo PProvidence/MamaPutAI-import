@@ -28,28 +28,7 @@ model User {
   updatedAt           DateTime
   sessions            Session[]
   accounts            Account[]
-   meals              Meal[]
-  id                 String       @id
-  email              String       @unique
-  password           String?
-  firstName          String?
-  lastName           String?
-  height             Int?
-  weight             Int?
-  birthDay           DateTime?
-  nationality        Nationality?
-  gender             Gender?
-  goal               Goal?
-  allergies          String[]
-  healthConditions   String[]
-  dietaryPreferences String[]
-  name               String
-  emailVerified      Boolean
-  image              String?
-  createdAt          DateTime
-  updatedAt          DateTime
-  sessions           Session[]
-  accounts           Account[]
+  meals              Meal[]
   remainders         Remainder[]
 
   @@map("user")
