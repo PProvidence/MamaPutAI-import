@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import formatDate from '../../utils/dateUtil';
 
 const Header = () => {
-  const profilePicture = useSelector((state) => state.userSettings.profileState.profilePicture);
+  const profilePicture = useSelector((state) => state.userSettings.profileState.image);
   const name = useSelector((state) => state.userSettings.profileState.name);
   // const currentDate = new Date().toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" });
 
