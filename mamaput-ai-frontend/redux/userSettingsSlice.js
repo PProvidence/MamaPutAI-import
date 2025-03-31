@@ -102,6 +102,47 @@
       dietaryPreference: [],
       image: defaultProfilePic,
     },
+
+    accountSettings: {
+      disableAccount: false,
+      password: "",
+    },
+
+    preferences: {
+      theme:  true,
+      langauge: "en",
+    },
+
+    notificationSettings: {
+      alertsEnabled: true,
+      pushNotificationsEnabled: true,
+      emailNotificationsEnabled: true,
+      feedbackAndPersonalizationEnabled: true,
+      accountAndSecurityEnabled: true,
+      alerts: {
+        mealPlanReminder: true,
+        hydrationAlert: true,
+      },
+      pushNotifications: {
+        calorieCounter: true,
+        weeklyNutritionSummary: true,
+        personalizedHealthAlerts: true,
+        mealReminders: true,
+      },
+      feedbackAndPersonalization: {
+        calorieCounter: true,
+        weeklyNutritionSummary: true,
+        personalizedHealthAlerts: true,
+        mealReminders: true,
+        achievementBadges: true,
+      },
+      accountAndSecurity: {
+        accountLoginAlerts: true,
+        securityUpdates: true,
+        importantAppAnnouncements: true,
+      },
+    },
+    
     // other state variables...
     isLoading: false,
     error: null,
