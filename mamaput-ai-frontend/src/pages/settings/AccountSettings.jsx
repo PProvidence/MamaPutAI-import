@@ -198,15 +198,11 @@ const AccountSettings = () => {
         }}
         className="py-10 px-5 flex flex-col gap-10"
       >
-        <h3 className="settings--form-heading">
-          Account - Verified Information
-        </h3>
+        <h3 className="settings--form-heading">Account - Verified Information</h3>
 
-        {/* Email Section */}
+        {/* EMAIL SETTINGS */}
         <div className="emailDiv flex flex-col gap-4">
-          <label className="text-base font-light font-instrument-sans">
-            Email
-          </label>
+          <label className="text-base font-light">Email</label>
           <input
             type="email"
             value={localSettings.email}
@@ -288,7 +284,7 @@ const AccountSettings = () => {
           </button>
         </div>
 
-        {/* Disable Account Section */}
+        {/* DISABLE ACCOUNT */}
         <div className="disableAccountDiv flex flex-col gap-4">
           <label className="text-lg">Disable Account</label>
           <p className="text-gray-500">You can temporarily disable your account. You can re-enable it at any time by logging in.</p>

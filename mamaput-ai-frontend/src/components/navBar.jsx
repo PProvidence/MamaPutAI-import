@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { XMarkIcon, Bars3CenterLeftIcon } from "@heroicons/react/24/solid";
+import logo from "../assets/img/mamaput-ai-logo-bold.png"; 
 
 const NavBar = () => {
   // NavLinks
@@ -15,10 +16,11 @@ const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="relative flex items-center justify-between px-4 py-4 font-instrument-sans lg:justify-evenly">
-      <div className="flex items-center">
-        <img src="" alt="MamaPut AI Logo" className="" />
-      </div>
+    <nav className="relative flex items-center justify-between px-4 py-5 font-instrument-sans lg:justify-evenly">
+      {/* <div className="w-20 h-10">
+        <img src={logo} alt="MamaPut AI Logo" className="object-cover"/>
+      </div> */}
+      <h3 className="heading--settings">MamaPut AI</h3>
 
       {/* Mobile menu button */}
       <button
@@ -62,7 +64,7 @@ const NavBar = () => {
           </li>
           <li>
             <Link
-              to="/get-started"
+              to="/signup"
               onClick={() => setIsOpen(false)}
               className="block uppercase btn--text-white bg-black rounded text-lg md:text-xs"
             >

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import defaultProfilePic from "../src/assets/img/default-profile.jpg";
 
 // Getting the user's details from the API
@@ -51,7 +51,6 @@ export const updateUserDetails = createAsyncThunk(
 // Minimal initial state before API data is loaded
 const initialState = {
   email: "",
-
   profileState: {
     firstName: "",
     lastName: "",
@@ -140,7 +139,6 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    // Add an allergy, health condition, or dietary preference
     addToProfileArray(state, action) {
       const { field, value } = action.payload;
       if (Array.isArray(state.profileState[field])) {
@@ -148,7 +146,6 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    // Remove an item from an array in profile settings
     removeFromProfileArray(state, action) {
       const { field, value } = action.payload;
       if (Array.isArray(state.profileState[field])) {
@@ -158,30 +155,27 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    toggleCategoryEnabled: (state, action) => {
+    toggleCategoryEnabled(state, action) {
       const category = action.payload;
       const isEnabled = !state.notificationSettings[`${category}Enabled`];
 
       state.notificationSettings[`${category}Enabled`] = isEnabled;
 
-      // If enabling, turn on all related settings
       Object.keys(state.notificationSettings[category]).forEach((setting) => {
         state.notificationSettings[category][setting] = isEnabled;
       });
     },
 
-    toggleNotificationSetting: (state, action) => {
+    toggleNotificationSetting(state, action) {
       const { category, setting } = action.payload;
       state.notificationSettings[category][setting] =
         !state.notificationSettings[category][setting];
     },
 
-    // ✅ New Action: Bulk update settings
-    setNotificationSettings: (state, action) => {
+    setNotificationSettings(state, action) {
       state.notificationSettings = action.payload;
     },
 
-    // Update account settings field
     updateAccountSetting(state, action) {
       const { field, value } = action.payload;
       if (Object.prototype.hasOwnProperty.call(state.accountSettings, field)) {
@@ -189,12 +183,10 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    // Update theme preference
     updateTheme(state, action) {
-      state.preferences.theme = action.payload;
+      state.preferences.themeLight = action.payload;
     },
 
-    // Update language preference
     updateLanguage(state, action) {
       state.preferences.language = action.payload;
     },
@@ -252,7 +244,6 @@ export const {
   removeFromProfileArray,
   toggleCategoryEnabled,
   toggleNotificationSetting,
-  setNotification,
   setNotificationSettings,
   updateAccountSetting,
   updateTheme,

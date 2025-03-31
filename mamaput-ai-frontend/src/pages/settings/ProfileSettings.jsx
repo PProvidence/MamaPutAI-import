@@ -137,7 +137,7 @@ const ProfileSettings = () => {
           <p className="text-base text-gray-500">Click the icon to upload a new picture</p>
         </div>
 
-        {/* Personal Information */}
+        {/* PERSONAL DETAILS */}
         <div className="flex flex-col md:flex-row md:gap-10">
           <label className="flex flex-col gap-2 w-full md:w-1/2">
             <span>First Name</span>
@@ -159,7 +159,6 @@ const ProfileSettings = () => {
           </label>
         </div>
 
-        {/* Email and DOB */}
         <div className="flex flex-col md:flex-row md:gap-10">
           <label className="flex flex-col gap-2 w-full md:w-1/2">
             <span>Email</span>
@@ -240,9 +239,9 @@ const ProfileSettings = () => {
           setList={(list) => handleChange("healthConditions", list)}
         />
 
-        {/* Dietary Preferences */}
+        {/* DIETARY PREFERENCE */}
         <div className="section">
-          <h2 className="settings--form-heading">Dietary Preference</h2>
+          <h2>Dietary Preference</h2>
           <select
             className="form-input-field"
             value={formData.dietaryPreference || ""}

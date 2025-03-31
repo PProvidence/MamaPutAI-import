@@ -9,6 +9,7 @@
   --font-dm-sans: "DM Sans", sans-serif;
 
   /* Custom colour variables */
+  --color-pryGreen:#16a34a;
   --color-primaryGreen: #166534;
   --color-secondaryGreen: #14532d;
   --color-tertiaryGreen: #f0fdf4;
@@ -24,6 +25,10 @@
   --color-tertiaryGrey: #FAFAFA;
   --color-darkGrey: #A3A3A3;
   --color-trueGrey: #737373;
+  --color-gray: #404040;
+  --color-gray2: #262626;
+  --color-gray3: #525252;
+  --color-amber-4: #FDE68A;
 }
 
 /* Utility Classes like custom button variant classes */
