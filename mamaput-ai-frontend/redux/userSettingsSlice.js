@@ -36,6 +36,7 @@
         height: updatedDetails.height,
         weight: updatedDetails.weight,
         allergies: updatedDetails.allergies,
+        goal: updatedDetails.goal,
         health_conditions: updatedDetails.health_conditions,
         dietary_preferences: updatedDetails.dietary_preferences,
         email: updatedDetails.email,
@@ -94,6 +95,7 @@
       weight: "",
       gender: "",
       nationality: "",
+      goal: "",
       allergies: [],
       healthConditions: [],
       dietaryPreference: [],
@@ -139,7 +141,7 @@
         importantAppAnnouncements: true,
       },
     },
-    
+
     // other state variables...
     isLoading: false,
     error: null,
@@ -156,6 +158,7 @@
       height: payload.height,
       weight: payload.weight,
       gender: payload.gender,
+      goal: payload.goal,
       nationality: payload.nationality,
       allergies: payload.allergies,
       healthConditions: payload.health_conditions,

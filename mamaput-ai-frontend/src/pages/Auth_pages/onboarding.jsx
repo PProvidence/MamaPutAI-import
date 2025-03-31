@@ -3,7 +3,12 @@ import { useState } from "react";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import allergensData from "../../data/allergens.json"; // Assuming you have a JSON file with allergens data
+import allergensData from "../../data/allergens.json";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateUserDetails,
+  getUserDetails,
+} from "../../../redux/userSettingsSlice";
 
 const side = [
   {
@@ -101,20 +106,25 @@ const dietaryPreferences = [
 ];
 
 const Onboarding = () => {
+  const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState("gender"); // 'gender' | 'goal' | 'background' | 'allergies'
   const [selectedGender, setSelectedGender] = useState("");
   const [selectedGoal, setSelectedGoal] = useState([]);
   const [selectedAllergies, setSelectedAllergies] = useState([]);
   const [selectedHealthCondition, setSelectedHealthCondition] = useState([]);
-  const [selectedDietaryPreference, setSelectedDietaryPreference] = useState(
-    []
-  );
+  const [selectedDietaryPreference, setSelectedDietaryPreference] = useState([]);
   const [unit, setUnit] = useState("metric"); // "metric" or "imperial"
   const [height, setHeight] = useState({ cm: "", feet: "", inches: "" });
   const [weight, setWeight] = useState({ kg: "", lbs: "" });
   const [showModal, setShowModal] = useState(false); // Track modal state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Local loading state
+  
+  const isLoading = useSelector((state) => state.userSettings.isLoading);
   const navigate = useNavigate();
   const currentIndex = step.indexOf(currentStep);
+  
   const nextStep = () => {
     const currentIndex = step.indexOf(currentStep);
     if (currentIndex < step.length - 1) {
@@ -127,6 +137,7 @@ const Onboarding = () => {
       }, 2000);
     }
   };
+  
   const prevStep = () => {
     if (currentIndex > 0) {
       setCurrentStep(step[currentIndex - 1]);
@@ -162,12 +173,76 @@ const Onboarding = () => {
     label: allergen.Allergen, // Use allergen name as label
     value: allergen.Allergen, // Use allergen name as value
   }));
+  
   const toggleGoal = (goal) => {
     setSelectedGoal((prevGoals) =>
       prevGoals.includes(goal)
         ? prevGoals.filter((g) => g !== goal)
         : [...prevGoals, goal]
     );
+  };
+
+  // Save profile details to the backend
+  const handleSave = async () => {
+    try {
+      // Set local loading state
+      setIsSubmitting(true);
+
+      // Transform height from feet/inches to cm if using imperial units
+      let heightInCm = height.cm;
+      if (unit === "imperial" && height.feet && height.inches) {
+        heightInCm = Math.round(
+          (parseFloat(height.feet) * 12 + parseFloat(height.inches)) * 2.54
+        );
+      }
+
+      // Transform weight from lbs to kg if using imperial units
+      let weightInKg = weight.kg;
+      if (unit === "imperial" && weight.lbs) {
+        weightInKg = Math.round(parseFloat(weight.lbs) / 2.20462);
+      }
+
+      // Transform frontend data to match backend format
+      const updatedDetails = {
+        gender: selectedGender,
+        goals: selectedGoal,
+        height: parseInt(heightInCm) || 0,
+        weight: parseInt(weightInKg) || 0,
+        allergies: selectedAllergies,
+        health_conditions: selectedHealthCondition,
+        dietary_preferences: selectedDietaryPreference,
+      };
+
+      console.log("Saving Profile Details:", updatedDetails);
+
+      // Dispatch the updateUserDetails action and wait for completion
+      await dispatch(updateUserDetails(updatedDetails)).unwrap();
+
+      // Fetch the updated details after successful save
+      await dispatch(getUserDetails());
+
+      console.log("Profile details saved successfully!");
+
+      // Show success state
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        // Show the completion modal
+        setShowModal(true);
+        setTimeout(() => {
+          navigate("/dashboard"); // Redirect after delay
+        }, 2000);
+      }, 1500);
+    } catch (error) {
+      console.error("Error saving profile details:", error);
+      // Show error state
+      setShowErrorMessage(true);
+      setTimeout(() => {
+        setShowErrorMessage(false);
+      }, 3000);
+    } finally {
+      setIsSubmitting(false); // Reset local loading state
+    }
   };
 
   return (
@@ -194,10 +269,24 @@ const Onboarding = () => {
       </div>
       {/* Right Section */}
       <div className="w-full md:w-2/4 p-6 md:p-12">
+        {/* Success message */}
+        {showSuccessMessage && (
+          <div className="bg-green-100 text-green-700 p-3 mb-4 rounded-md transition-all">
+            Profile details saved successfully!
+          </div>
+        )}
+        
+        {/* Error message */}
+        {showErrorMessage && (
+          <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-md transition-all">
+            Error saving profile details. Please try again.
+          </div>
+        )}
+        
         {currentStep === "gender" && (
           <>
             <h2 className="text-2xl pb-4 font-bold text-gray-800">
-              Welcome! Let’s set up your profile
+              Welcome! Let's set up your profile
             </h2>
             <p className="text-sm pb-4 mb-2 text-gray-800">
               Remember you can always modify this setting on your dashboard
@@ -224,9 +313,9 @@ const Onboarding = () => {
                   <input
                     type="radio"
                     name="gender"
-                    value={gender}
-                    checked={selectedGender === gender}
-                    onChange={() => setSelectedGender(gender)}
+                    value={gender.toUpperCase()}
+                    checked={selectedGender === gender.toUpperCase()}
+                    onChange={() => setSelectedGender(gender.toUpperCase())}
                     className="hidden peer"
                   />
                   <div className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-green-600 peer-checked:bg-green-600">
@@ -540,8 +629,13 @@ const Onboarding = () => {
               <Select
                 options={allergyOptions}
                 isMulti
-                value={selectedAllergies}
-                onChange={setSelectedAllergies}
+                value={selectedAllergies.map((a) => ({ label: a, value: a }))} // Adjusted for the multi-select options to work
+                onChange={(selectedOptions) => {
+                  // Map the selected options to an array of strings (values)
+                  setSelectedAllergies(
+                    selectedOptions.map((option) => option.value)
+                  );
+                }}
                 className="border rounded-lg"
                 classNamePrefix="custom-select"
                 placeholder="Select allergies..."
@@ -550,19 +644,17 @@ const Onboarding = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {selectedAllergies.map((allergy) => (
                     <button
-                      key={allergy.value}
+                      key={allergy} // Now allergy is just a string, not an object
                       type="button"
                       className="bg-red-100 text-red-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
                       onClick={() =>
                         setSelectedAllergies(
-                          selectedAllergies.filter(
-                            (a) => a.value !== allergy.value
-                          )
+                          selectedAllergies.filter((a) => a !== allergy)
                         )
                       }
                     >
-                      <span>{allergy.label}</span>{" "}
-                      {/* Access the label property */}
+                      <span>{allergy}</span>{" "}
+                      {/* Directly display the allergy value */}
                       <XCircle className="h-4 w-4 fill-current" />
                     </button>
                   ))}
@@ -575,8 +667,13 @@ const Onboarding = () => {
               <label className="font-semibold mb-2">Health Condition</label>
               <Select
                 options={healthConditions.map((h) => ({ label: h, value: h }))}
-                value={selectedHealthCondition}
-                onChange={setSelectedHealthCondition}
+                value={selectedHealthCondition.map((val) => ({
+                  label: val,
+                  value: val,
+                }))}
+                onChange={(selected) =>
+                  setSelectedHealthCondition(selected.map((s) => s.value))
+                }
                 isMulti
                 className="border rounded-lg"
                 classNamePrefix="custom-select"
@@ -586,19 +683,16 @@ const Onboarding = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {selectedHealthCondition.map((condition) => (
                     <button
-                      key={condition.value} // Assuming you're using react-select for this as well
+                      key={condition}
                       type="button"
                       className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
                       onClick={() =>
                         setSelectedHealthCondition(
-                          selectedHealthCondition.filter(
-                            (c) => c.value !== condition.value
-                          )
+                          selectedHealthCondition.filter((c) => c !== condition)
                         )
                       }
                     >
-                      <span>{condition.label}</span>{" "}
-                      {/* Access the label property */}
+                      <span>{condition}</span> {/* Display only the value */}
                       <XCircle className="h-4 w-4 fill-current" />
                     </button>
                   ))}
@@ -614,8 +708,16 @@ const Onboarding = () => {
                   label: d,
                   value: d,
                 }))}
-                value={selectedDietaryPreference}
-                onChange={setSelectedDietaryPreference}
+                value={selectedDietaryPreference.map((d) => ({
+                  label: d,
+                  value: d,
+                }))} // Convert string array to label-value format for the Select
+                onChange={(selectedOptions) => {
+                  // Map the selected options to an array of strings (values)
+                  setSelectedDietaryPreference(
+                    selectedOptions.map((option) => option.value)
+                  );
+                }}
                 isMulti
                 className="border rounded-lg"
                 classNamePrefix="custom-select"
@@ -625,18 +727,18 @@ const Onboarding = () => {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {selectedDietaryPreference.map((preference) => (
                     <button
-                      key={preference.value} //Assuming you're using react-select for this as well
+                      key={preference} // Directly use preference as it's now a string
                       type="button"
                       className="bg-green-100 text-green-700 px-2 py-1 rounded-md text-sm font-medium flex items-center space-x-1"
                       onClick={() =>
                         setSelectedDietaryPreference(
                           selectedDietaryPreference.filter(
-                            (p) => p.value !== preference.value
+                            (p) => p !== preference
                           )
                         )
                       }
                     >
-                      <span>{preference.label}</span>
+                      <span>{preference}</span> {/* Show preference directly */}
                       <XCircle className="h-4 w-4 fill-current" />
                     </button>
                   ))}
@@ -644,10 +746,11 @@ const Onboarding = () => {
               )}
             </div>
 
-            <div className="flex justify-between mt-6  ">
+            <div className="flex justify-between mt-6">
               <button
                 onClick={prevStep}
                 className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"
+                disabled={isSubmitting || isLoading}
               >
                 Back
               </button>
@@ -659,59 +762,53 @@ const Onboarding = () => {
                   }, 2000); // Adjust timing if needed
                 }}
                 className="w-25 mt-4 rounded-md py-2 bg-white text-green-600 text-sm font-semibold shadow-lg transition"
+                disabled={isSubmitting || isLoading}
               >
                 Skip this step
               </button>
               <button
-                onClick={() => {
-                  // Check if any allergy, health condition, or dietary preference is selected
-                  if (
-                    selectedAllergies.length > 0 ||
-                    selectedHealthCondition.length > 0 ||
-                    selectedDietaryPreference.length > 0
-                  ) {
-                    setShowModal(true); // Show modal
-                    setTimeout(() => {
-                      navigate("/dashboard"); // Redirect after 2 sec
-                    }, 2000);
-                  } else {
-                    // Optionally, provide feedback to the user that they need to select something
-                    alert(
-                      "Please select at least one allergy, health condition, or dietary preference to proceed."
-                    );
-                  }
-                }}
+                onClick={handleSave}
                 className={`w-25 mt-4 rounded-md py-2 text-white ${
-                  selectedAllergies.length > 0 ||
+                  (selectedAllergies.length > 0 ||
                   selectedHealthCondition.length > 0 ||
-                  selectedDietaryPreference.length > 0
+                  selectedDietaryPreference.length > 0) && !isSubmitting && !isLoading
                     ? "bg-green-600 hover:bg-green-700"
-                    : "bg-gray-400 cursor-not-allowed" // Disable the button if no input
+                    : "bg-gray-400 cursor-not-allowed" // Disable the button if no input or loading
                 } text-sm transition`}
                 disabled={
-                  selectedAllergies.length === 0 &&
+                  (selectedAllergies.length === 0 &&
                   selectedHealthCondition.length === 0 &&
-                  selectedDietaryPreference.length === 0
+                  selectedDietaryPreference.length === 0) || 
+                  isSubmitting || 
+                  isLoading
                 }
               >
-                {currentIndex === step.length - 1 ? "Complete" : "Next"}
+                {isSubmitting || isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white mr-2"></div>
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  (currentIndex === step.length - 1 ? "Complete" : "Next")
+                )}
               </button>
-            {/* Logging You In Modal */}
-            {showModal && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    Logging you in...
-                  </h2>
-                  <p className="text-gray-500 mt-2">
-                    Please wait while we redirect you.
-                  </p>
-                  <div className="mt-4 flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-green-500"></div>
+
+              {/* Logging You In Modal */}
+              {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      Logging you in...
+                    </h2>
+                    <p className="text-gray-500 mt-2">
+                      Please wait while we redirect you.
+                    </p>
+                    <div className="mt-4 flex justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-green-500"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
           </>
         )}
