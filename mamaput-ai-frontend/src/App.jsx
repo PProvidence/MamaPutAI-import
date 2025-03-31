@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { getUserDetails } from "../redux/userSettingsSlice";
 
 import LandingPageLayout from "./components/layouts/LandingPageLayout";
 import SettingsLayout from "./components/layouts/SettingsLayout";
@@ -13,6 +16,12 @@ import DieticianPage from "./pages/DieticianPage";
 import FAQs from "./pages/FAQs";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUserDetails()); // Automatically fetch user details on app start
+  }, [dispatch]);
+
   return (
     <Router>
       <Routes>
