@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InputSection from "../../components/SettingsComponent/InputSection";
-import {
-  updateProfileField,
-  updateEmail,
-} from "../../../redux/userSettingsSlice";
+import { updateUserDetails, getUserDetails } from "../../../redux/userSettingsSlice";
 import { Pencil } from "lucide-react";
-import defaultProfilePic from "../../assets/img/default-profile.jpg"; 
+import defaultProfilePic from "../../assets/img/default-profile.jpg";
 
 const ProfileSettings = () => {
   const dispatch = useDispatch();
-  const userEmail = useSelector((state) => state.userSettings.email);
   const profileState = useSelector((state) => state.userSettings.profileState);
+  const userEmail = useSelector((state) => state.userSettings.email);
 
-  // Initialize form data state
+  // Local State
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -24,39 +21,34 @@ const ProfileSettings = () => {
     allergies: [],
     healthConditions: [],
     dietaryPreference: "",
-    profilePicture: defaultProfilePic, // Default image
+    profilePicture: defaultProfilePic,
   });
 
   const [email, setEmail] = useState("");
   const [preview, setPreview] = useState(defaultProfilePic);
 
-  // Update state when Redux state changes
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, [dispatch]);
+
   useEffect(() => {
     if (profileState) {
       setFormData({
-        firstName: profileState.firstName || "",
-        lastName: profileState.lastName || "",
-        birthDay: profileState.birthDay || "",
-        gender: profileState.gender || "",
-        height: profileState.height || "",
-        weight: profileState.weight || "",
-        allergies: profileState.allergies || [],
-        healthConditions: profileState.healthConditions || [],
-        dietaryPreference: profileState.dietaryPreference || "",
+        ...formData,
+        ...profileState,
         profilePicture: profileState.profilePicture || defaultProfilePic,
       });
-
       setEmail(userEmail);
       setPreview(profileState.profilePicture || defaultProfilePic);
     }
   }, [profileState, userEmail]);
 
-  // Handle input change
+  // Handle Input Changes
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Handle profile picture upload
+  // Profile Picture Preview
   const handleProfilePictureChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -68,28 +60,28 @@ const ProfileSettings = () => {
     }
   };
 
-  // Handle saving profile changes
-  const handleSave = () => {
-    dispatch(updateEmail(email));
+  // Save Profile Data
+  const handleSave = async () => {
+    const updatedDetails = {
+      ...formData,
+      email,
+    };
 
-    // If the profile picture is a file, handle upload (you need to implement backend/Firebase logic)
-    if (formData.profilePicture instanceof File) {
-      const formDataUpload = new FormData();
-      formDataUpload.append("profilePicture", formData.profilePicture);
+    try {
+      if (formData.profilePicture instanceof File) {
+        const formDataUpload = new FormData();
+        formDataUpload.append("profilePicture", formData.profilePicture);
 
-      // TODO: Upload to backend or Firebase and get URL
-      // Example:
-      // uploadProfilePicture(formDataUpload).then((url) => {
-      //   dispatch(updateProfileField({ field: "profilePicture", value: url }));
-      // });
-    }
-
-    // Save other form fields
-    Object.keys(formData).forEach((key) => {
-      if (key !== "profilePicture") {
-        dispatch(updateProfileField({ field: key, value: formData[key] }));
+        // Example Upload (assuming uploadProfilePicture function exists)
+        // const url = await uploadProfilePicture(formDataUpload);
+        // updatedDetails.profilePicture = url;
       }
-    });
+
+      await dispatch(updateUserDetails(updatedDetails)).unwrap();
+      alert("Profile details saved successfully!");
+    } catch (error) {
+      alert("Failed to save profile details: " + error);
+    }
   };
 
   return (
@@ -97,35 +89,32 @@ const ProfileSettings = () => {
       <h1 className="heading--settings">Profile Settings</h1>
 
       <form className="py-10 px-5 flex flex-col gap-10">
-           {/* Profile Picture Section */}
-      <div className="relative flex flex-col gap-5">
-        <div className="relative w-40 h-40 ">
-          <img
-            src={preview}
-            alt="Profile"
-            className="w-full h-full object-cover rounded-full"
-          />
-          <label
-            htmlFor="profilePic"
-            className="absolute bottom-2 right-2 bg-settingsGreen p-2 rounded-full cursor-pointer"
-          >
-            <Pencil size={20} className="text-white" />
-            <input
-              type="file"
-              id="profilePic"
-              accept="image/*"
-              className="hidden"
-              onChange={handleProfilePictureChange}
+        {/* PROFILE PICTURE */}
+        <div className="relative flex flex-col gap-5">
+          <div className="relative w-40 h-40">
+            <img
+              src={preview}
+              alt="Profile"
+              className="w-full h-full object-cover rounded-full"
             />
-          </label>
+            <label htmlFor="profilePic" className="absolute bottom-2 right-2 bg-settingsGreen p-2 rounded-full cursor-pointer">
+              <Pencil size={20} className="text-white" />
+              <input
+                type="file"
+                id="profilePic"
+                accept="image/*"
+                className="hidden"
+                onChange={handleProfilePictureChange}
+              />
+            </label>
+          </div>
+          <p className="text-base text-gray-500">Click the icon to upload a new picture</p>
         </div>
-        <p className="text-base text-gray-500">Click the icon to upload a new picture</p>
-      </div>
 
-        {/* Personal Information */}
+        {/* PERSONAL DETAILS */}
         <div className="flex flex-col md:flex-row md:gap-10">
           <label className="flex flex-col gap-2">
-            <span className="text-lightBlack text-base">First Name</span>
+            <span>First Name</span>
             <input
               type="text"
               value={formData.firstName}
@@ -134,7 +123,7 @@ const ProfileSettings = () => {
             />
           </label>
           <label className="flex flex-col gap-2">
-            <span className="text-lightBlack text-base">Last Name</span>
+            <span>Last Name</span>
             <input
               type="text"
               value={formData.lastName}
@@ -144,10 +133,9 @@ const ProfileSettings = () => {
           </label>
         </div>
 
-        {/* Email and DOB */}
         <div className="flex flex-col md:flex-row md:gap-10">
           <label className="flex flex-col gap-2">
-            <span className="text-lightBlack text-base">Email</span>
+            <span>Email</span>
             <input
               type="email"
               value={email}
@@ -156,7 +144,7 @@ const ProfileSettings = () => {
             />
           </label>
           <label className="flex flex-col gap-2">
-            <span className="text-lightBlack text-base">Birthday</span>
+            <span>Birthday</span>
             <input
               type="date"
               value={formData.birthDay}
@@ -166,27 +154,7 @@ const ProfileSettings = () => {
           </label>
         </div>
 
-        {/* Gender, Height & Weight */}
-        <div className="section">
-          <h2 className="settings--form-heading">Gender, Height & Weight</h2>
-          <div className="flex flex-col gap-3">
-            {["Male", "Female", "Rather not say"].map((gender) => (
-              <label key={gender} className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="gender"
-                  value={gender}
-                  checked={formData.gender === gender}
-                  onChange={(e) => handleChange("gender", e.target.value)}
-                  className="form-radio accent-settingsGreen"
-                />
-                {gender}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Medical Information */}
+        {/* ALLERGIES & CONDITIONS */}
         <InputSection
           title="Allergies"
           list={formData.allergies}
@@ -198,9 +166,9 @@ const ProfileSettings = () => {
           setList={(list) => handleChange("healthConditions", list)}
         />
 
-        {/* Dietary Preferences */}
+        {/* DIETARY PREFERENCE */}
         <div className="section">
-          <h2 className="settings--form-heading">Dietary Preference</h2>
+          <h2>Dietary Preference</h2>
           <select
             className="form-input-field"
             value={formData.dietaryPreference}
@@ -215,7 +183,6 @@ const ProfileSettings = () => {
           </select>
         </div>
 
-        {/* Save Button */}
         <button type="button" className="form-button" onClick={handleSave}>
           Save Changes
         </button>

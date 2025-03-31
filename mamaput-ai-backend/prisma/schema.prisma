@@ -1,22 +1,128 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-   output   = "node_modules/@prisma/client"
-  engineType = "binary"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model User {
-  id    String     @id @default(uuid())
-  email String  @unique
-  name  String?
+  id                  String       @id
+  email               String       @unique
+  password            String?
+  height              Int?
+  weight              Int?
+  DOB                 DateTime?
+  nationality         Nationality?
+  gender              Gender?
+  goal                Goal?
+  allergies           String[]
+  health_conditions   String[]
+  dietary_preferences String[]
+  name                String
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  sessions            Session[]
+  accounts            Account[]
+  meals              Meal[]
+  remainders         Remainder[]
+
+  @@map("user")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Goal {
+  GainWeight
+  LoseWeight
+  ManageHealthCondition
+  None
+}
+
+enum Nationality {
+  Nigeria
+  Togo
+  Ghana
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Meal {
+  id          String   @id @default(uuid()) 
+  name        String  
+  description String?  
+  calories    Float    
+  nutrients   Json    
+  userId      String   
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
+
+  @@map("meal")
+}
+
+
+model Feedback {
+  id        String   @id @default(uuid())
+  emotion   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Remainder {
+  id        String   @id
+  title     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
