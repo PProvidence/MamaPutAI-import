@@ -4,7 +4,7 @@ import { RiMentalHealthFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import allergensData from "../../data/allergens.json";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   updateUserDetails,
   getUserDetails,
@@ -112,15 +112,19 @@ const Onboarding = () => {
   const [selectedGoal, setSelectedGoal] = useState([]);
   const [selectedAllergies, setSelectedAllergies] = useState([]);
   const [selectedHealthCondition, setSelectedHealthCondition] = useState([]);
-  const [selectedDietaryPreference, setSelectedDietaryPreference] = useState(
-    []
-  );
+  const [selectedDietaryPreference, setSelectedDietaryPreference] = useState([]);
   const [unit, setUnit] = useState("metric"); // "metric" or "imperial"
   const [height, setHeight] = useState({ cm: "", feet: "", inches: "" });
   const [weight, setWeight] = useState({ kg: "", lbs: "" });
   const [showModal, setShowModal] = useState(false); // Track modal state
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Local loading state
+  
+  const isLoading = useSelector((state) => state.userSettings.isLoading);
   const navigate = useNavigate();
   const currentIndex = step.indexOf(currentStep);
+  
   const nextStep = () => {
     const currentIndex = step.indexOf(currentStep);
     if (currentIndex < step.length - 1) {
@@ -133,6 +137,7 @@ const Onboarding = () => {
       }, 2000);
     }
   };
+  
   const prevStep = () => {
     if (currentIndex > 0) {
       setCurrentStep(step[currentIndex - 1]);
@@ -168,6 +173,7 @@ const Onboarding = () => {
     label: allergen.Allergen, // Use allergen name as label
     value: allergen.Allergen, // Use allergen name as value
   }));
+  
   const toggleGoal = (goal) => {
     setSelectedGoal((prevGoals) =>
       prevGoals.includes(goal)
@@ -179,11 +185,29 @@ const Onboarding = () => {
   // Save profile details to the backend
   const handleSave = async () => {
     try {
+      // Set local loading state
+      setIsSubmitting(true);
+
+      // Transform height from feet/inches to cm if using imperial units
+      let heightInCm = height.cm;
+      if (unit === "imperial" && height.feet && height.inches) {
+        heightInCm = Math.round(
+          (parseFloat(height.feet) * 12 + parseFloat(height.inches)) * 2.54
+        );
+      }
+
+      // Transform weight from lbs to kg if using imperial units
+      let weightInKg = weight.kg;
+      if (unit === "imperial" && weight.lbs) {
+        weightInKg = Math.round(parseFloat(weight.lbs) / 2.20462);
+      }
+
       // Transform frontend data to match backend format
       const updatedDetails = {
         gender: selectedGender,
-        height: parseInt(height.cm),
-        weight: unit === "metric" ? parseInt(weight.kg) : parseInt(weight.lbs),
+        goals: selectedGoal,
+        height: parseInt(heightInCm) || 0,
+        weight: parseInt(weightInKg) || 0,
         allergies: selectedAllergies,
         health_conditions: selectedHealthCondition,
         dietary_preferences: selectedDietaryPreference,
@@ -195,13 +219,29 @@ const Onboarding = () => {
       await dispatch(updateUserDetails(updatedDetails)).unwrap();
 
       // Fetch the updated details after successful save
-      dispatch(getUserDetails());
+      await dispatch(getUserDetails());
 
       console.log("Profile details saved successfully!");
-      alert("Profile details saved successfully!");
+
+      // Show success state
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        // Show the completion modal
+        setShowModal(true);
+        setTimeout(() => {
+          navigate("/dashboard"); // Redirect after delay
+        }, 2000);
+      }, 1500);
     } catch (error) {
       console.error("Error saving profile details:", error);
-      alert("Failed to save profile details. Please try again.");
+      // Show error state
+      setShowErrorMessage(true);
+      setTimeout(() => {
+        setShowErrorMessage(false);
+      }, 3000);
+    } finally {
+      setIsSubmitting(false); // Reset local loading state
     }
   };
 
@@ -229,10 +269,24 @@ const Onboarding = () => {
       </div>
       {/* Right Section */}
       <div className="w-full md:w-2/4 p-6 md:p-12">
+        {/* Success message */}
+        {showSuccessMessage && (
+          <div className="bg-green-100 text-green-700 p-3 mb-4 rounded-md transition-all">
+            Profile details saved successfully!
+          </div>
+        )}
+        
+        {/* Error message */}
+        {showErrorMessage && (
+          <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-md transition-all">
+            Error saving profile details. Please try again.
+          </div>
+        )}
+        
         {currentStep === "gender" && (
           <>
             <h2 className="text-2xl pb-4 font-bold text-gray-800">
-              Welcome! Let’s set up your profile
+              Welcome! Let's set up your profile
             </h2>
             <p className="text-sm pb-4 mb-2 text-gray-800">
               Remember you can always modify this setting on your dashboard
@@ -259,9 +313,9 @@ const Onboarding = () => {
                   <input
                     type="radio"
                     name="gender"
-                    value={gender}
-                    checked={selectedGender === gender}
-                    onChange={() => setSelectedGender(gender)}
+                    value={gender.toUpperCase()}
+                    checked={selectedGender === gender.toUpperCase()}
+                    onChange={() => setSelectedGender(gender.toUpperCase())}
                     className="hidden peer"
                   />
                   <div className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-green-600 peer-checked:bg-green-600">
@@ -692,10 +746,11 @@ const Onboarding = () => {
               )}
             </div>
 
-            <div className="flex justify-between mt-6  ">
+            <div className="flex justify-between mt-6">
               <button
                 onClick={prevStep}
                 className="w-25 mt-4 rounded-md py-2 text-white bg-green-600 text-sm hover:bg-green-700 transition"
+                disabled={isSubmitting || isLoading}
               >
                 Back
               </button>
@@ -707,48 +762,40 @@ const Onboarding = () => {
                   }, 2000); // Adjust timing if needed
                 }}
                 className="w-25 mt-4 rounded-md py-2 bg-white text-green-600 text-sm font-semibold shadow-lg transition"
+                disabled={isSubmitting || isLoading}
               >
                 Skip this step
               </button>
               <button
-                onClick={() => {
-                  // Check if any allergy, health condition, or dietary preference is selected
-                  if (
-                    selectedAllergies.length > 0 ||
-                    selectedHealthCondition.length > 0 ||
-                    selectedDietaryPreference.length > 0
-                  ) {
-                    handleSave(); // Call handleSave function
-                    setShowModal(true); // Show modal
-                    setTimeout(() => {
-                      navigate("/dashboard"); // Redirect after 2 sec
-                    }, 2000);
-                  } else {
-                    // Optionally, provide feedback to the user that they need to select something
-                    alert(
-                      "Please select at least one allergy, health condition, or dietary preference to proceed."
-                    );
-                  }
-                }}
+                onClick={handleSave}
                 className={`w-25 mt-4 rounded-md py-2 text-white ${
-                  selectedAllergies.length > 0 ||
+                  (selectedAllergies.length > 0 ||
                   selectedHealthCondition.length > 0 ||
-                  selectedDietaryPreference.length > 0
+                  selectedDietaryPreference.length > 0) && !isSubmitting && !isLoading
                     ? "bg-green-600 hover:bg-green-700"
-                    : "bg-gray-400 cursor-not-allowed" // Disable the button if no input
+                    : "bg-gray-400 cursor-not-allowed" // Disable the button if no input or loading
                 } text-sm transition`}
                 disabled={
-                  selectedAllergies.length === 0 &&
+                  (selectedAllergies.length === 0 &&
                   selectedHealthCondition.length === 0 &&
-                  selectedDietaryPreference.length === 0
+                  selectedDietaryPreference.length === 0) || 
+                  isSubmitting || 
+                  isLoading
                 }
               >
-                {currentIndex === step.length - 1 ? "Complete" : "Next"}
+                {isSubmitting || isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white mr-2"></div>
+                    <span>Saving...</span>
+                  </div>
+                ) : (
+                  (currentIndex === step.length - 1 ? "Complete" : "Next")
+                )}
               </button>
 
               {/* Logging You In Modal */}
               {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                   <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                     <h2 className="text-xl font-semibold text-gray-800">
                       Logging you in...
