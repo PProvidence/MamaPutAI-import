@@ -1,9 +1,8 @@
-import express from "express";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const storeFeedback = async (req: express.Request, res: express.Response): Promise<void> =>{
+export const storeFeedback = async (req, res) =>{
     try {
         const { emotion, message } = req.body;
     
@@ -23,7 +22,7 @@ export const storeFeedback = async (req: express.Request, res: express.Response)
     
 }
 
-export const getFeedback = async (req: express.Request, res: express.Response): Promise<void> =>{
+export const getFeedback = async (req, res) =>{
     try {
         const feedback = await prisma.feedback.findMany();
         res.json(feedback);

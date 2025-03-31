@@ -1,10 +1,7 @@
-import express from "express";
-import { PrismaClient } from "@prisma/client";
 import dayjs from "dayjs";
+import { prisma } from "../lib/prisma.js";
 
-const prisma = new PrismaClient();
-
-export const storeMeal = async (req: express.Request, res: express.Response): Promise<void> => {
+export const storeMeal = async (req, res) => {
   try {
     const { userId, name, description, numCalories, ...nutrients } = req.body;
     if (!userId || !name || !description || !numCalories || Object.keys(nutrients).length === 0) {
@@ -29,7 +26,7 @@ export const storeMeal = async (req: express.Request, res: express.Response): Pr
   }
 };
 
-export const getNutrients= async (req: express.Request, res: express.Response): Promise<void> =>{
+export const getNutrients= async (req, res)=>{
     try {
         const { userId } = req.params;
     
@@ -44,8 +41,8 @@ export const getNutrients= async (req: express.Request, res: express.Response): 
         }
     
         // Group nutrients by day
-        const dailyNutrients: Record<string, Record<string, number>> = {};
-        const monthlyNutrients: Record<string, Record<string, number>> = {};
+        const dailyNutrients = {};
+        const monthlyNutrients = {};
     
         meals.forEach((meal) => {
           const date = dayjs(meal.createdAt).format("YYYY-MM-DD"); // Format as "2025-03-29"

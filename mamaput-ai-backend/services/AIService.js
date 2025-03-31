@@ -1,7 +1,6 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { configDotenv } from "dotenv";
 import { generateText } from "ai";
-import type { Request, Response } from "express";
+import { configDotenv } from "dotenv";
 configDotenv({ path: "./.env" });
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -29,7 +28,7 @@ function getRandomCuisines() {
   return shuffled.slice(0, 3 + Math.floor(Math.random() * 2)).join(", ");
 }
 
-export async function getMeals(req: Request, res: Response) {
+export async function getMeals(req, res) {
   const { allergies, health_conditions, dietary_conditions } = req.body;
 
   const timestamp = new Date().toISOString();

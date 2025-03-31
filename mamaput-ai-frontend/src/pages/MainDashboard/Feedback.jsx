@@ -6,11 +6,11 @@ const Feedback = () => {
   const [selectedEmotion, setSelectedEmotion] = useState(null);
 
   const emotions = [
-    { id: 'great', label: 'Great', emoji: '😄' },
-    { id: 'good', label: 'Good', emoji: '🙂' },
-    { id: 'okay', label: 'Okay', emoji: '😐' },
-    { id: 'bad', label: 'Bad', emoji: '🙁' },
-    { id: 'terrible', label: 'Terrible', emoji: '😞' }
+    { id: 'great', label: 'Great', emoji: '😄', color: 'bg-green-200', border: 'border-green-500' },
+    { id: 'good', label: 'Good', emoji: '🙂', color: 'bg-lime-200', border: 'border-lime-500' },
+    { id: 'okay', label: 'Okay', emoji: '😐', color: 'bg-yellow-100', border: 'border-yellow-500' },
+    { id: 'bad', label: 'Bad', emoji: '🙁', color: 'bg-orange-100', border: 'border-orange-500' },
+    { id: 'terrible', label: 'Terrible', emoji: '😞', color: 'bg-red-200', border: 'border-red-500' }
   ];
 
   const handleSubmit = (e) => {
@@ -27,16 +27,16 @@ const Feedback = () => {
     // Handle form submission logic here
     console.log('Submitting feedback:', { emotion: selectedEmotion, message: feedback });
 
-  //  Later Remove simulation to Handle form submission logic here -  The following block should ONLY run when you have a working backend.
-  //  Start Simulation Block
-  console.log('Simulated feedback submission:', { emotion: selectedEmotion, message: feedback });
-  setFeedback('');
-  setSelectedEmotion(null);
-  alert('Feedback submitted successfully!');
-  //  End Simulation Block
-    
+    // Later Remove simulation to Handle form submission logic here - The following block should ONLY run when you have a working backend.
+    // Start Simulation Block
+    console.log('Simulated feedback submission:', { emotion: selectedEmotion, message: feedback });
+    setFeedback('');
+    setSelectedEmotion(null);
+    alert('Feedback submitted successfully!');
+    //End Simulation Block
+
     /*
-    //  Commented out fetch because no backend endpoint is available yet
+    //Commented out fetch because no backend endpoint is available yet
 
     fetch('/api/feedback', { // Replace '/api/feedback' with your actual API endpoint
       method: 'POST',
@@ -51,7 +51,7 @@ const Feedback = () => {
         console.log('Feedback submitted successfully!');
         setFeedback('');  // Clear the form
         setSelectedEmotion(null);
-        alert('Feedback submitted successfully!'); //  Move success message here
+        alert('Feedback submitted successfully!'); // Move success message here
       } else {
         // Handle error (e.g., show an error message)
         console.error('Failed to submit feedback.');
@@ -61,7 +61,7 @@ const Feedback = () => {
     .catch(error => {
       // Handle network error
       console.error('Error submitting feedback:', error);
-       alert('Network error. Please try again.');
+      alert('Network error. Please try again.');
     });
     */
   };
@@ -73,7 +73,7 @@ const Feedback = () => {
   return (
     <div className="p-6 font-instrument-sans">
       <div className="flex items-center mb-6">
-        <ChevronLeft className="mr-4 cursor-pointer hover:text-pryGreen"  onClick={handleGoBack} />
+        <ChevronLeft className="mr-4 cursor-pointer hover:text-pryGreen" onClick={handleGoBack} />
         <h1 className="text-xl xl:text-2xl font-bold">Feedbacks</h1>
       </div>
 
@@ -91,7 +91,7 @@ const Feedback = () => {
                   onClick={() => setSelectedEmotion(emotion.id)}
                   className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                     selectedEmotion === emotion.id
-                      ? 'bg-green-100 border-2 border-green-500'
+                      ? `${emotion.color} border-2 ${emotion.border}`
                       : 'bg-gray-100 hover:bg-gray-200 transition-colors'
                   } aspect-square`} // Make it square
                 >
