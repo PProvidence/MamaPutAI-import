@@ -1,9 +1,55 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import defaultProfilePic from "../src/assets/img/default-profile.jpg";
+
+//  Getting the user's default details from the onboarding process
+export const getUserDetails = createAsyncThunk(
+  "userSettings/getUserDetails",
+  async (_, { rejectWithValue }) => {
+    const url = "http://localhost:3005/me";
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Network response was not ok: " + response.statusText);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Updating the user's details
+export const updateUserDetails = createAsyncThunk(
+  "userSettings/updateUserDetails",
+  async (updatedDetails, { rejectWithValue }) => {
+    const url = "http://localhost:3005/edit/me";
+
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedDetails),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          "Failed to update user details: " + response.statusText
+        );
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const initialState = {
   email: "",
-
   profileState: {
     firstName: "",
     lastName: "",
@@ -36,6 +82,30 @@ const initialState = {
     themeLight: true,
     language: "en",
   },
+
+  isLoading: false,
+  error: null,
+};
+
+// Update User State
+const updateUserState = (state, payload) => {
+  state.email = payload.email;
+  state.profileState = {
+    ...state.profileState,
+    ...payload.profileState,
+  };
+  state.notificationSettings = {
+    ...state.notificationSettings,
+    ...payload.notificationSettings,
+  };
+  state.accountSettings = {
+    ...state.accountSettings,
+    ...payload.accountSettings,
+  };
+  state.preferences = {
+    ...state.preferences,
+    ...payload.preferences,
+  };
 };
 
 const userSettingsSlice = createSlice({
@@ -55,7 +125,6 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    // Add an allergy, health condition, or dietary preference
     addToProfileArray(state, action) {
       const { field, value } = action.payload;
       if (Array.isArray(state.profileState[field])) {
@@ -63,7 +132,6 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    // Remove an item from an array in profile settings
     removeFromProfileArray(state, action) {
       const { field, value } = action.payload;
       if (Array.isArray(state.profileState[field])) {
@@ -73,30 +141,27 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    toggleCategoryEnabled: (state, action) => {
+    toggleCategoryEnabled(state, action) {
       const category = action.payload;
       const isEnabled = !state.notificationSettings[`${category}Enabled`];
 
       state.notificationSettings[`${category}Enabled`] = isEnabled;
 
-      // If enabling, turn on all related settings
       Object.keys(state.notificationSettings[category]).forEach((setting) => {
         state.notificationSettings[category][setting] = isEnabled;
       });
     },
 
-    toggleNotificationSetting: (state, action) => {
+    toggleNotificationSetting(state, action) {
       const { category, setting } = action.payload;
       state.notificationSettings[category][setting] =
         !state.notificationSettings[category][setting];
     },
 
-    // ✅ New Action: Bulk update settings
-    setNotificationSettings: (state, action) => {
+    setNotificationSettings(state, action) {
       state.notificationSettings = action.payload;
     },
 
-    // Update account settings field
     updateAccountSetting(state, action) {
       const { field, value } = action.payload;
       if (Object.prototype.hasOwnProperty.call(state.accountSettings, field)) {
@@ -104,15 +169,43 @@ const userSettingsSlice = createSlice({
       }
     },
 
-    // Update theme preference
     updateTheme(state, action) {
-      state.preferences.theme = action.payload;
+      state.preferences.themeLight = action.payload;
     },
 
-    // Update language preference
     updateLanguage(state, action) {
       state.preferences.language = action.payload;
     },
+  },
+
+  // ✅ Using Helper Function in Extra Reducers
+  extraReducers: (builder) => {
+    builder
+      .addCase(getUserDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getUserDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        updateUserState(state, action.payload);
+      })
+      .addCase(getUserDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateUserDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateUserDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        updateUserState(state, action.payload);
+      })
+      .addCase(updateUserDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
@@ -123,7 +216,6 @@ export const {
   removeFromProfileArray,
   toggleCategoryEnabled,
   toggleNotificationSetting,
-  setNotification,
   setNotificationSettings,
   updateAccountSetting,
   updateTheme,

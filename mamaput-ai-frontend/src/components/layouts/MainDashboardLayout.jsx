@@ -12,7 +12,7 @@ const MainDashboardLayout = ({ children }) => {
 
   const navigate = useNavigate();
 
-  // ✅ Close mobile menu when screen size changes to desktop
+  // Close mobile menu when screen size changes to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isMobileMenuOpen) {

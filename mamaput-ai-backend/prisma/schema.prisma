@@ -9,27 +9,27 @@ datasource db {
 }
 
 model User {
-  id                 String       @id
-  email              String       @unique
-  password           String?
-  firstName          String?
-  lastName           String?
-  height             Int?
-  weight             Int?
-  birthDay           DateTime?
-  nationality        Nationality?
-  gender             Gender?
-  goal               Goal?
-  allergies          String[]
-  healthConditions   String[]
-  dietaryPreferences String[]
-  name               String
-  emailVerified      Boolean
-  image              String?
-  createdAt          DateTime
-  updatedAt          DateTime
-  sessions           Session[]
-  accounts           Account[]
+  id                  String       @id
+  email               String       @unique
+  password            String?
+  height              Int?
+  weight              Int?
+  DOB                 DateTime?
+  nationality         Nationality?
+  gender              Gender?
+  goal                Goal?
+  allergies           String[]
+  health_conditions   String[]
+  dietary_preferences String[]
+  name                String
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  sessions            Session[]
+  accounts            Account[]
+  meals              Meal[]
+  remainders         Remainder[]
 
   @@map("user")
 }
@@ -95,4 +95,34 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Meal {
+  id          String   @id @default(uuid()) 
+  name        String  
+  description String?  
+  calories    Float    
+  nutrients   Json    
+  userId      String   
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
+
+  @@map("meal")
+}
+
+
+model Feedback {
+  id        String   @id @default(uuid())
+  emotion   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Remainder {
+  id        String   @id
+  title     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }

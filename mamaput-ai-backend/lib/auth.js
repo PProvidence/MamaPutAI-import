@@ -35,7 +35,7 @@ export const auth = betterAuth({
           await resend.emails.send({
             from: "Acme <onboarding@resend.dev>",
             to: email,
-            subject: "Email Verification",
+            subject: "MamaPut AI Email Verification",
             html: `Your MamaPut AI OTP is <code>${otp}</code>.  
             This code is valid for <strong>5 minutes</strong>. Do not share it with anyone.
 `,
