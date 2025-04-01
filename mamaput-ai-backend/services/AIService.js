@@ -1,6 +1,10 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { configDotenv } from "dotenv";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../lib/auth.js";
+import { prisma } from "../lib/prisma.js";
+
 configDotenv({ path: "./.env" });
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -8,20 +12,7 @@ const google = createGoogleGenerativeAI({
 
 function getRandomCuisines() {
   const cuisines = [
-    "West African",
-    "North African",
-    "East African",
-    "South African",
-    "Central African",
-    "Ethiopian",
     "Nigerian",
-    "Moroccan",
-    "Egyptian",
-    "Kenyan",
-    "Ghanaian",
-    "Senegalese",
-    "Tunisian",
-    "Algerian",
   ];
 
   const shuffled = [...cuisines].sort(() => 0.5 - Math.random());
@@ -29,15 +20,29 @@ function getRandomCuisines() {
 }
 
 export async function getMeals(req, res) {
-  const { allergies, health_conditions, dietary_conditions } = req.body;
+  const session = await auth.api.getSession({
+    headers: fromNodeHeaders(req.headers),
+  });
+
+  if (!session) {
+    res.status(404).json("No User Found");
+    return;
+  }
+  const user = await prisma.user.findFirst({
+    where: { id: session.user.id },
+  });
+
+  if (!user) {
+    res.status(404).json("No User Found");
+  }
 
   const timestamp = new Date().toISOString();
   const randomCuisines = getRandomCuisines();
 
   try {
     const { text } = await generateText({
-      temperature: 2,
-      topP: 0.95,
+      temperature: 1.2,
+      topP: 0.9,
       model: google("gemini-2.0-flash-001"),
       messages: [
         {
@@ -46,11 +51,11 @@ export async function getMeals(req, res) {
                - Focus specifically on these regional cuisines today: ${randomCuisines}
                - Current timestamp: ${timestamp}
                - Ensure each generation of meals is unique.
-               - Consider user allergies: ${allergies}
-               - Consider health conditions: ${health_conditions}
-               - Consider dietary restrictions: ${dietary_conditions}
+               - Consider user allergies: ${user.allergies}
+               - Consider health conditions: ${user.health_conditions}
+               - Consider dietary restrictions: ${user.dietary_preferences}
                - Include a recommended **water intake** (in liters) for each meal.
-
+               - Include the goal of ${user.goals} to make the list
                The output should follow this example format:
                [
                {
@@ -103,7 +108,7 @@ export async function getMeals(req, res) {
                },
                { "day": "Tuesday", "meals": [ ... ] },
                ...
-               ]` 
+               ]`,
         },
       ],
     });

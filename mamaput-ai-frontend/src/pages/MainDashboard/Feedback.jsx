@@ -1,5 +1,5 @@
+import { Check, ChevronLeft } from 'lucide-react';
 import { useState } from 'react';
-import { ChevronLeft, XCircle, Check } from 'lucide-react';
 
 const Feedback = () => {
   const [feedback, setFeedback] = useState('');
@@ -46,6 +46,7 @@ const Feedback = () => {
     // API call
     fetch('http://localhost:3005/feedback/store-feedback', {
       method: 'POST',
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json',
       },

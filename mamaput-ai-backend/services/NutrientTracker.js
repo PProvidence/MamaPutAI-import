@@ -1,31 +1,6 @@
 import dayjs from "dayjs";
 import { prisma } from "../lib/prisma.js";
 
-export const storeMeal = async (req, res) => {
-  try {
-    const { userId, name, description, numCalories, ...nutrients } = req.body;
-    if (!userId || !name || !description || !numCalories || Object.keys(nutrients).length === 0) {
-      res.status(400).json({ error: "Missing required fields" });
-      return;
-    }
-
-    const meal = await prisma.meal.create({
-      data: {
-        userId,
-        name,
-        description,
-        calories: numCalories,
-        nutrients: nutrients,
-      },
-    });
-
-    res.status(201).json({ message: "Meal stored successfully", meal });
-  } catch (error) {
-    console.error("Error storing meal:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 export const getNutrients= async (req, res)=>{
     try {
         const { userId } = req.params;

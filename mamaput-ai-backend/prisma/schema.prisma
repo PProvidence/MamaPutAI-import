@@ -17,7 +17,7 @@ model User {
   DOB                 String?
   nationality         Nationality?
   gender              Gender?
-  goal                Goal?
+  goals               String[]
   allergies           String[]
   health_conditions   String[]
   dietary_preferences String[]
@@ -28,8 +28,9 @@ model User {
   updatedAt           DateTime
   sessions            Session[]
   accounts            Account[]
-  meals              Meal[]
-  remainders         Remainder[]
+  meals               Meal[]
+  remainders          Remainder[]
+  feedbacks           Feedback[]
 
   @@map("user")
 }
@@ -37,13 +38,6 @@ model User {
 enum Gender {
   MALE
   FEMALE
-}
-
-enum Goal {
-  GainWeight
-  LoseWeight
-  ManageHealthCondition
-  None
 }
 
 enum Nationality {
@@ -98,25 +92,28 @@ model Verification {
 }
 
 model Meal {
-  id          String   @id @default(uuid()) 
-  name        String  
-  description String?  
-  calories    Float    
-  nutrients   Json    
-  userId      String   
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  calories    Float
+  nutrients   Json
+  userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now()) 
+  createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("meal")
 }
-
 
 model Feedback {
   id        String   @id @default(uuid())
   emotion   String
   message   String
   createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("feedback")
 }
 
 model Remainder {
@@ -125,4 +122,6 @@ model Remainder {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@map("remainder")
 }

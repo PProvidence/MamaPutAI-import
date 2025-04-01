@@ -50,8 +50,6 @@ export async function getUser(req, res) {
       headers: fromNodeHeaders(req.headers),
     });
 
-    console.log(session)
-
     if (!session) {
       res.status(404).json("No User Found");
       return;
