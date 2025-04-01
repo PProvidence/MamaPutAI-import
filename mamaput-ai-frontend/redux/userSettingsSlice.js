@@ -86,9 +86,6 @@
     }
   );
 
-
-
-
   const initialState = {
     email: "",
     profileState: {
