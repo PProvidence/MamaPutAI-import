@@ -40,6 +40,7 @@
         health_conditions: updatedDetails.health_conditions,
         dietary_preferences: updatedDetails.dietary_preferences,
         email: updatedDetails.email,
+        image: updatedDetails.image
       };
 
       // Convert image to base64 if present
@@ -97,8 +98,8 @@
       nationality: "",
       goal: "",
       allergies: [],
-      healthConditions: [],
-      dietaryPreference: [],
+      health_conditions: [],
+      dietary_preferences: [],
       image: defaultProfilePic,
     },
 
@@ -161,9 +162,9 @@
       goal: payload.goal,
       nationality: payload.nationality,
       allergies: payload.allergies,
-      healthConditions: payload.health_conditions,
-      dietaryPreference: payload.dietary_preferences,
-      image: payload.profilePicture || state.profileState.image,
+      health_conditions: payload.health_conditions,
+      dietary_preferences: payload.dietary_preferences,
+      image:  payload.image || state.profileState.image
     };
 
     state.isLoading = false;

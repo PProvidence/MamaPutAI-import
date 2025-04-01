@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateUserDetails } from "../../../redux/userSettingsSlice";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-
+import { authClient } from "../../../lib/authclient.js"
 const AccountSettings = () => {
   const dispatch = useDispatch();
   const { accountSettings, email } = useSelector((state) => state.userSettings);
@@ -24,13 +24,15 @@ const AccountSettings = () => {
   };
 
   // Update Email
-  const handleEmailChange = () => {
+  const handleEmailChange = async() => {
     if (!localSettings.email.includes("@")) {
       alert("Please enter a valid email");
       return;
     }
 
-    dispatch(updateUserDetails({ email: localSettings.email }));
+    await authClient.changeEmail({
+      newEmail: localSettings.email
+    })
   };
 
   // Update Password

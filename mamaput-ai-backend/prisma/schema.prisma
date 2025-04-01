@@ -14,7 +14,7 @@ model User {
   password            String?
   height              Int?
   weight              Int?
-  DOB                 DateTime?
+  DOB                 String?
   nationality         Nationality?
   gender              Gender?
   goal                Goal?

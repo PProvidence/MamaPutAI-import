@@ -120,7 +120,7 @@ const Onboarding = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Local loading state
-  
+  const [dob, setDOB] = useState("")
   const isLoading = useSelector((state) => state.userSettings.isLoading);
   const navigate = useNavigate();
   const currentIndex = step.indexOf(currentStep);
@@ -204,6 +204,7 @@ const Onboarding = () => {
 
       // Transform frontend data to match backend format
       const updatedDetails = {
+        DOB: dob,
         gender: selectedGender,
         goals: selectedGoal,
         height: parseInt(heightInCm) || 0,
@@ -286,7 +287,7 @@ const Onboarding = () => {
         {currentStep === "gender" && (
           <>
             <h2 className="text-2xl pb-4 font-bold text-gray-800">
-              Welcome! Let's set up your profile
+              Welcome! Let&apos;s set up your profile
             </h2>
             <p className="text-sm pb-4 mb-2 text-gray-800">
               Remember you can always modify this setting on your dashboard
@@ -544,6 +545,8 @@ const Onboarding = () => {
               <div className="relative">
                 <input
                   type="date"
+                  value={dob}
+                  onChange={(e) => setDOB(e.target.value)}
                   className="w-full p-2 pl-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-500 appearance-none"
                   onFocus={(e) => (e.target.style.color = "black")} // Ensure input text turns black on focus
                   style={{
