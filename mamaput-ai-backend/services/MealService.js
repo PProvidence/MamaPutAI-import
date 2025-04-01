@@ -2,7 +2,8 @@ import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../lib/auth.js";
 import { prisma } from "../lib/prisma.js";
 
-export const storeFeedback = async (req, res) => {
+export const storeMeal = async (req, res) => {
+  const { name, description, numCalories, nutrients } = req.body;
   try {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
@@ -19,31 +20,29 @@ export const storeFeedback = async (req, res) => {
     if (!user) {
       res.status(404).json("No User Found");
     }
-    const { emotion, message } = req.body;
-
-    if (!emotion || !message) {
+    if (
+      !name ||
+      !description ||
+      !numCalories ||
+      Object.keys(nutrients).length === 0
+    ) {
       res.status(400).json({ error: "Missing required fields" });
+      return;
     }
 
-    const feedback = await prisma.feedback.create({
-      data: { emotion, message, userId: user.id },
+    const meal = await prisma.meal.create({
+      data: {
+        userId: user.id,
+        name,
+        description,
+        calories: numCalories,
+        nutrients: nutrients,
+      },
     });
 
-    res
-      .status(201)
-      .json({ message: "Feedback submitted successfully", feedback });
+    res.status(201).json({ message: "Meal saved successfully", meal });
   } catch (error) {
-    console.error("Error storing feedback:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const getFeedback = async (req, res) => {
-  try {
-    const feedback = await prisma.feedback.findMany();
-    res.json(feedback);
-  } catch (error) {
-    console.error("Error getting feedback:", error);
+    console.error("Error storing meal:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

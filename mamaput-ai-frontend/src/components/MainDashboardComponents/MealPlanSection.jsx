@@ -99,7 +99,7 @@ const MealPlanSection = () => {
         
         // Make API request to generate new meal plan
         fetch('http://localhost:3005/ai/meals', {
-            method: 'POST',
+            method: 'GET',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'

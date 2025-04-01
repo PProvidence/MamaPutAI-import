@@ -1,11 +1,12 @@
 import express from "express";
 import { getMeals } from "../services/AIService.js";
-import { getNutrients, storeMeal } from "../services/NutrientTracker.js";
+import { getNutrients } from "../services/NutrientTracker.js";
+import { storeMeal } from "../services/MealService.js";
 
 
 
 export const mealRouter = express.Router()
  
-mealRouter.post('/get-meals', getMeals)
+mealRouter.get('/get-meals', getMeals)
 mealRouter.post('/store-meals', storeMeal)
-mealRouter.get('/get-nutrients/:userId', getNutrients)
+mealRouter.post('/get-nutrients/:userId', getNutrients)
