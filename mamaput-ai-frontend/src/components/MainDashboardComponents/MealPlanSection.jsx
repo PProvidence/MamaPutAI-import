@@ -121,18 +121,43 @@ const MealPlanSection = () => {
                 </div>
                 {/* Action Buttons */}
                 <div className="flex gap-5 py-3 md:my-2 relative">
+                    {/* Generate new plan button */}
                     <button className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-700 transition"
                         onClick={() => {
                             if (ignoreFilters) {
                                 setFilters({ budget: [], mealType: [] }); // Ignore filters
                                 setIgnoreFilters(false); // Reset ignore state
                             }
-                            // Logic for generating a new plan
+                            
+                            // Make API request to generate new meal plan
+                            fetch('http://localhost:3005/ai/meals', {
+                                method: 'POST',
+                                credentials: 'include',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to generate meal plan');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('New meal plan generated:', data);
+                                // Handle the response data here - you might need to update state with the new meal plan
+                                // Example: setMealPlan(data.meals);
+                            })
+                            .catch(error => {
+                                console.error('Error generating meal plan:', error);
+                                // Handle errors here - maybe show a notification to the user
+                            });
                         }}
                     >
                         <Plus className="w-6 h-6" />
                         <span className="font-semibold">Generate new plan</span>
                     </button>
+
 
                     <button className="border border-gray-300 cursor-pointer hover:text-pryGreen rounded-lg px-4 py-2 flex items-center space-x-2" 
                         onClick={() => setIsFilterOpen(!isFilterOpen)} 
