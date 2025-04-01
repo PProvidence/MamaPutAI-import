@@ -14,6 +14,7 @@ const ProfileSettings = () => {
   const userEmail = useSelector((state) => state.userSettings.email);
   const isLoading = useSelector((state) => state.userSettings.isLoading);
 
+  console.log(profileState)
   // Local State
   const [formData, setFormData] = useState({
     name: "",
@@ -24,7 +25,7 @@ const ProfileSettings = () => {
     allergies: [],
     health_conditions: [],
     dietary_preferences: [],
-    image: defaultProfilePic,
+    image: "",
   });
 
   const [email, setEmail] = useState("");
@@ -82,7 +83,7 @@ const ProfileSettings = () => {
         allergies: formData.allergies,
         health_conditions: formData.health_conditions,
         dietary_preferences: formData.dietary_preferences,
-        image: formData.image instanceof File ? formData.image : null,
+        image: formData.image,
       };
 
       console.log(updatedDetails);
