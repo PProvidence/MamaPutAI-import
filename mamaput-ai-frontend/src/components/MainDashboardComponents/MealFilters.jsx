@@ -66,7 +66,7 @@ const MealFilters = ({ filters, setFilters, setFiltersActive }) => {
           {/* Meal Type */}
           <div className="mb-3">
             <h3 className="text-gray-700 font-semibold">Meal Type</h3>
-            {["Breakfast", "Lunch", "Dinner", "Snacks"].map((option) => (
+            {["Breakfast", "Lunch", "Dinner", "Snack"].map((option) => (
               <label key={option} className="flex items-center gap-2 mt-2">
                 <input
                   type="checkbox"

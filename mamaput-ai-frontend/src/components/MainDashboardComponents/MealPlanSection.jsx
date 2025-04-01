@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Plus, X } from 'lucide-react';
+import { useState } from 'react';
 import { IoFilterOutline } from "react-icons/io5";
 import MealFilters from './MealFilters';
 
 // Import meal images
-import pap from '../../assets/img/pap.svg';
-import meatpie from '../../assets/img/meatpie.svg';
-import jollof from '../../assets/img/jollof.svg';
 import amala from '../../assets/img/amala.svg';
+import jollof from '../../assets/img/jollof.svg';
+import meatpie from '../../assets/img/meatpie.svg';
+import pap from '../../assets/img/pap.svg';
 
 // Map meal types to images
 const mealTypeImages = {
