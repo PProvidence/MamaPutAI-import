@@ -15,7 +15,7 @@ const Header = () => {
     <div className="flex justify-between items-center mb-6">
     <div>
       <p className="text-sm font-medium text-gray-600">{formattedDate}</p>
-      <h1 className="text-2xl font-bold">Howdy {name ? name.split(' ')[0] : "user"}</h1>
+      <h1 className="text-2xl font-bold">Howdy {name ? name.split(' ')[0] : "user"} !</h1>
     </div>
     <div className="flex items-center space-x-3">
       <Link to="/dashboard/notifications">
