@@ -10,6 +10,8 @@ import jollof from "../../assets/img/jollof.svg";
 import meatpie from "../../assets/img/meatpie.svg";
 import pap from "../../assets/img/pap.svg";
 
+const API_URL =
+  import.meta.env.API_URL || "http://localhost:3005/meal/get-meals";
 // Map meal types to images
 const mealTypeImages = {
   Breakfast: pap,
@@ -118,7 +120,7 @@ const MealPlanSection = () => {
     }
 
     // Make API request to generate new meal plan
-    fetch("http://localhost:3005/meal/get-meals", {
+    fetch(`${API_URL}/meal/get-meals`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -468,7 +470,7 @@ const MealPlanSection = () => {
                       console.log(await res.json());
                     }
                     closeMealModal();
-                    setModalMeal(prev => prev.selected = true)
+                    setModalMeal((prev) => (prev.selected = true));
                   } catch (error) {
                     console.log(error);
                   } finally {

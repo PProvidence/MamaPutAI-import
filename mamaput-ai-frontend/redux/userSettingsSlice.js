@@ -1,12 +1,13 @@
   import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
   import defaultProfilePic from "../src/assets/img/default-profile.jpg";
 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3005";
 
   // Getting the user's default details from the onboarding process
   export const getUserDetails = createAsyncThunk(
     "userSettings/getUserDetails",
     async (_, { rejectWithValue }) => {
-      const url = "http://localhost:3005/user/me";
+      const url =  `${API_URL}/user/me`;
       try {
         const response = await fetch(url, {
           credentials: "include"
@@ -26,7 +27,7 @@
   export const updateUserDetails = createAsyncThunk(
     "userSettings/updateUserDetails",
     async (updatedDetails, { rejectWithValue }) => {
-      const url = "http://localhost:3005/user/edit/me";
+      const url =  `${API_URL}/user/uedit/me`;
 
       // Prepare JSON payload
       const payload = {
