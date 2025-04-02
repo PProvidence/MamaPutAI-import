@@ -9,6 +9,8 @@ import {
   updateUserDetails,
   getUserDetails,
 } from "../../../redux/userSettingsSlice";
+import { authClient } from "../../../lib/authclient";
+import { useEffect } from "react";
 
 const side = [
   {
@@ -124,6 +126,27 @@ const Onboarding = () => {
   const isLoading = useSelector((state) => state.userSettings.isLoading);
   const navigate = useNavigate();
   const currentIndex = step.indexOf(currentStep);
+
+  // ✅ Improved authentication check
+    useEffect(() => {
+      async function fetchSession() {
+        try {
+          const session = await authClient.getSession();
+          console.log("Session Response:", session);
+  
+          // Check if session and session.data exist
+          if (!session || !session.data) {
+            navigate("/"); // Redirect to login
+          } else {
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error("Error fetching session:", error);
+          navigate("/");
+        }
+      }
+      fetchSession();
+    }, [navigate]);
   
   const nextStep = () => {
     const currentIndex = step.indexOf(currentStep);
