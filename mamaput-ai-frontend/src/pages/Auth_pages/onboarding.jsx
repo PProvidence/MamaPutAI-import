@@ -137,8 +137,6 @@ const Onboarding = () => {
           // Check if session and session.data exist
           if (!session || !session.data) {
             navigate("/"); // Redirect to login
-          } else {
-            setIsLoading(false);
           }
         } catch (error) {
           console.error("Error fetching session:", error);

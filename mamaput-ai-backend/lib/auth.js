@@ -6,7 +6,7 @@ import { configDotenv } from "dotenv";
 import { Resend } from "resend";
 
 configDotenv({ path: "./.env" });
-const resend = new Resend(process.env.RESEND_API_KEY);
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -28,22 +28,22 @@ export const auth = betterAuth({
   baseURL: "http://localhost:3005",
   trustedOrigins: ["http://localhost:5173", "https://api.mamaplaceai.tech"],
 
-  plugins: [
-    emailOTP({
-      otpLength: 8,
-      expiresIn: 300,
-      async sendVerificationOTP({ email, otp, type }) {
-        if (type == "email-verification") {
-          await resend.emails.send({
-            from: "Acme <onboarding@resend.dev>",
-            to: email,
-            subject: "MamaPut AI Email Verification",
-            html: `Your MamaPut AI OTP is <code>${otp}</code>.  
-            This code is valid for <strong>5 minutes</strong>. Do not share it with anyone.
-`,
-          });
-        }
-      },
-    }),
-  ],
+//   plugins: [
+//     emailOTP({
+//       otpLength: 8,
+//       expiresIn: 300,
+//       async sendVerificationOTP({ email, otp, type }) {
+//         if (type == "email-verification") {
+//           await resend.emails.send({
+//             from: "Acme <onboarding@resend.dev>",
+//             to: email,
+//             subject: "MamaPut AI Email Verification",
+//             html: `Your MamaPut AI OTP is <code>${otp}</code>.  
+//             This code is valid for <strong>5 minutes</strong>. Do not share it with anyone.
+// `,
+//           });
+//         }
+//       },
+//     }),
+//   ],
 });

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import {
-  FaApple,
   FaCircleCheck,
   FaRegEye,
-  FaRegEyeSlash,
+  FaRegEyeSlash
 } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { MdEmail } from "react-icons/md";
@@ -36,7 +35,7 @@ const SignupPage = () => {
     lastName: "",
     password: "",
   });
-  const [OTP, setOTP] = useState("");
+  // const [OTP, setOTP] = useState("");
   const [isLoading, setIsLoading] = useState({
     create: false,
     verify: false,
@@ -75,25 +74,24 @@ const SignupPage = () => {
         password: formData.password,
         name: `${formData.firstName} ${formData.lastName}`,
       });
-
       if (error) {
         setError(error.message || "An unknown error occurred");
         throw new Error(error.message);
       }
+      navigate("/onboarding");
+      // const { error: verifyError } =
+      //   await authClient.emailOtp.sendVerificationOtp({
+      //     email: formData.email,
+      //     type: "email-verification",
+      //   });
 
-      const { error: verifyError } =
-        await authClient.emailOtp.sendVerificationOtp({
-          email: formData.email,
-          type: "email-verification",
-        });
+      // if (verifyError) {
+      //   setError("");
+      //   setError(error.message);
+      //   throw new Error(error.message);
+      // }
 
-      if (verifyError) {
-        setError("");
-        setError(error.message);
-        throw new Error(error.message);
-      }
-
-      setStep("verify");
+      // setStep("verify");
     } catch (error) {
       console.error(error);
     } finally {
@@ -101,31 +99,31 @@ const SignupPage = () => {
     }
   };
 
-  const handleVerify = async () => {
-    setIsLoading((prev) => ({ ...prev, verify: true }));
-    try {
-      const { error } = await authClient.emailOtp.verifyEmail(
-        {
-          email: formData.email,
-          otp: OTP,
-        },
-        {
-          onSuccess() {
-            navigate("/onboarding");
-          },
-        }
-      );
+  // const handleVerify = async () => {
+  //   setIsLoading((prev) => ({ ...prev, verify: true }));
+  //   try {
+  //     const { error } = await authClient.emailOtp.verifyEmail(
+  //       {
+  //         email: formData.email,
+  //         otp: OTP,
+  //       },
+  //       {
+  //         onSuccess() {
+  //           navigate("/onboarding");
+  //         },
+  //       }
+  //     );
 
-      if (error) {
-        setError(error.message || "An unknown error occurred");
-        throw new Error(error.message);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading((prev) => ({ ...prev, verify: false }));
-    }
-  };
+  //     if (error) {
+  //       setError(error.message || "An unknown error occurred");
+  //       throw new Error(error.message);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setIsLoading((prev) => ({ ...prev, verify: false }));
+  //   }
+  // };
 
   return (
     <div className="h-screen flex flex-col-reverse items-center justify-center lg:flex-row bg-white gap-16">
@@ -185,10 +183,10 @@ const SignupPage = () => {
                   Continue with Google
                 </button>
 
-                <button className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50">
+                {/* <button className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50">
                   <FaApple />
                   Continue with Apple
-                </button>
+                </button> */}
               </div>
 
               <p className="mt-4 text-sm text-center">
@@ -320,7 +318,7 @@ const SignupPage = () => {
             </div>
           )}
 
-          {step === "verify" && (
+          {/* {step === "verify" && (
             // Step 3: Verification Step
             <div>
               <h2 className="text-2xl flex justify-center pb-4 font-bold mb-4">
@@ -377,7 +375,7 @@ const SignupPage = () => {
                 ← Back to sign-up
               </button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

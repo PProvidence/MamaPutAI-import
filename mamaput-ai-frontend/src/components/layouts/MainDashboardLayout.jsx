@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import SideNavbar from "../MainDashboardComponents/SideNavbar";
 import { useNavigate } from "react-router-dom";
-import { authClient } from "../../../lib/authclient"; 
+import { authClient } from "../../../lib/authclient";
 
 const MainDashboardLayout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -28,18 +28,20 @@ const MainDashboardLayout = ({ children }) => {
   useEffect(() => {
     async function fetchSession() {
       try {
-        const session = await authClient.getSession();
-        console.log("Session Response:", session);
+        const { data, error } = await authClient.getSession();
+        console.log("Session Response:", data);
 
+        if (error) {
+          navigate("/");
+        }
         // Check if session and session.data exist
-        if (!session || !session.data) {
+        if (!data) {
           navigate("/"); // Redirect to login
         } else {
           setIsLoading(false);
         }
       } catch (error) {
         console.error("Error fetching session:", error);
-        navigate("/");
       }
     }
     fetchSession();

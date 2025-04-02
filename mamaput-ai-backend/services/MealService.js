@@ -3,7 +3,7 @@ import { auth } from "../lib/auth.js";
 import { prisma } from "../lib/prisma.js";
 
 export const storeMeal = async (req, res) => {
-  const { name, description, numCalories, nutrients } = req.body;
+  const { name, description, calories, nutrients } = req.body;
   try {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
@@ -20,22 +20,13 @@ export const storeMeal = async (req, res) => {
     if (!user) {
       res.status(404).json("No User Found");
     }
-    if (
-      !name ||
-      !description ||
-      !numCalories ||
-      Object.keys(nutrients).length === 0
-    ) {
-      res.status(400).json({ error: "Missing required fields" });
-      return;
-    }
 
     const meal = await prisma.meal.create({
       data: {
         userId: user.id,
-        name,
-        description,
-        calories: numCalories,
+        name: name,
+        description: description,
+        calories: calories,
         nutrients: nutrients,
       },
     });

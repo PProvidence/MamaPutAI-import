@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaApple, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { authClient } from "../../../lib/authclient";
@@ -24,7 +24,7 @@ const LoginPage = () => {
   const isNewPasswordValid =
     formData.newPassword.length >= 8 && passwordHasNumber && passwordHasSymbol;
   const passwordsMatch = formData.newPassword === formData.confirmPassword;
-  const isResetValid = isNewPasswordValid && passwordsMatch;
+  // const isResetValid = isNewPasswordValid && passwordsMatch;
   const isFormValid =
     formData.email.length > 0 && formData.password.length >= 8;
   const isPasswordValid = formData.password.length >= 8;
@@ -39,25 +39,16 @@ const LoginPage = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const { error } = await authClient.signIn.email(
-        {
-          email: formData.email,
-          password: formData.password,
-        },
-        {
-          onSuccess() {
-            navigate("/onboarding");
-          },
-          onError(error) {
-            console.log(error.response);
-          },
-        }
-      );
+      const { error } = await authClient.signIn.email({
+        email: formData.email,
+        password: formData.password,
+      });
 
       if (error) {
         setError(error.message || "An unknown error occurred");
         throw new Error(error.message);
       }
+      navigate("/onboarding");
     } catch (error) {
       console.log(error);
     } finally {
@@ -103,12 +94,12 @@ const LoginPage = () => {
                   >
                     Password
                   </label>
-                  <p
+                  {/* <p
                     className="text-right text-sm text-green-600 font-semibold cursor-pointer"
                     onClick={() => setStep("changeP")}
                   >
                     Forgot Password?
-                  </p>
+                  </p> */}
                 </div>
                 <div className="relative">
                   <input
@@ -155,24 +146,21 @@ const LoginPage = () => {
               <div className="mt-6 space-y-2">
                 <button
                   onClick={async () => {
-                    await authClient.signIn.social(
-                      {
-                        provider: "google",
-                        callbackURL: "http://localhost:5173/dashboard"
-                      },
-                     
-                    );
+                    await authClient.signIn.social({
+                      provider: "google",
+                      callbackURL: "http://localhost:5173/dashboard",
+                    });
                   }}
                   className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50"
                 >
                   <FcGoogle />
                   Continue with Google
                 </button>
-
+                {/* 
                 <button className="w-full flex text-black items-center hover:opacity-80 justify-center gap-3 bg-white border border-gray-200 py-3 text-sm sm:text-base rounded-lg font-semibold transition hover:bg-gray-50">
                   <FaApple />
                   Continue with Apple
-                </button>
+                </button> */}
               </div>
 
               <p className="mt-4 text-sm text-center">
@@ -275,7 +263,7 @@ const LoginPage = () => {
                 </p>
               )}
 
-              <button
+              {/* <button
                 onClick={() => setStep("options")}
                 type="submit"
                 disabled={!isResetValid}
@@ -286,7 +274,7 @@ const LoginPage = () => {
                 }`}
               >
                 Reset Password
-              </button>
+              </button> */}
               <button
                 onClick={() => setStep("options")}
                 className="w-full mt-4 text-sm text-gray-500 hover:underline"
