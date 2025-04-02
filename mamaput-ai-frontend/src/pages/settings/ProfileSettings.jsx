@@ -156,7 +156,7 @@ const ProfileSettings = () => {
             <span>Gender</span>
             <select
               value={formData.gender}
-              onChange={(e) => handleChange("gender", e.target.value)}
+              onChange={(e) => handleChange("gender.toUpperCase()", e.target.value)}
               className="form-input-field"
               disabled={isLoading} // Disable input while loading
             >
