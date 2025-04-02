@@ -17,7 +17,7 @@ model User {
   DOB                 String?
   nationality         Nationality?
   gender              Gender?
-  goals               String[]
+  goals              String[]
   allergies           String[]
   health_conditions   String[]
   dietary_preferences String[]

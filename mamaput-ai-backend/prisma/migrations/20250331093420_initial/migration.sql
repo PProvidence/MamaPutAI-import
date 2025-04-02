@@ -17,7 +17,7 @@ CREATE TABLE "user" (
     "DOB" TIMESTAMP(3),
     "nationality" "Nationality",
     "gender" "Gender",
-    "goal" "Goal",
+    "goals" "Goal",
     "allergies" TEXT[],
     "health_conditions" TEXT[],
     "dietary_preferences" TEXT[],
