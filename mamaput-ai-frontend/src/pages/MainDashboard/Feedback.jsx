@@ -44,7 +44,7 @@ const Feedback = () => {
     const feedbackData = { emotion: selectedEmotion, message: feedback };
     console.log('Submitting feedback:', feedbackData);
     // API call
-    fetch('http://localhost:3005/feedback/store-feedback', {
+    fetch(`${import.meta.env.VITE_API_URL}/feedback/store-feedback`, {
       method: 'POST',
       credentials: "include",
       headers: {
